@@ -1,0 +1,1079 @@
+{
+  "report_type": "Automated Access Control Security Test Report",
+  "generated_at": "06 October 2026, 16:06:55",
+  "target": {
+    "name": "SECUREHUB",
+    "base_url": "https://securehub-di8a.onrender.com"
+  },
+  "summary": {
+    "passed": 30,
+    "failed": 2,
+    "skipped": 0,
+    "errors": 0,
+    "total": 32,
+    "overall": "FAIL"
+  },
+  "categories": [
+    [
+      "Authentication",
+      {
+        "total": 8,
+        "passed": 7,
+        "failed": 1
+      }
+    ],
+    [
+      "Authorization",
+      {
+        "total": 14,
+        "passed": 14,
+        "failed": 0
+      }
+    ],
+    [
+      "Horizontal Authorization / IDOR",
+      {
+        "total": 2,
+        "passed": 2,
+        "failed": 0
+      }
+    ],
+    [
+      "JWT Validation",
+      {
+        "total": 8,
+        "passed": 7,
+        "failed": 1
+      }
+    ]
+  ],
+  "tests": [
+    {
+      "id": "AC-0001",
+      "role": "anonymous",
+      "category": "Authentication",
+      "method": "POST",
+      "endpoint": "/api/auth/logout",
+      "rule": "Authentication control failure: anonymous received HTTP 200 for POST /api/auth/logout; expected HTTP status 401, 403, 302.",
+      "expected": "401, 403, 302",
+      "actual": "200",
+      "status": "FAIL",
+      "finding": "Authentication control failure: anonymous received HTTP 200 for POST /api/auth/logout; expected HTTP status 401, 403, 302.",
+      "error": "",
+      "evidence": "HTTP 200 from POST /api/auth/logout",
+      "request_url": "https://securehub-di8a.onrender.com/api/auth/logout",
+      "response_body": {
+        "message": "Logout successful",
+        "success": true
+      }
+    },
+    {
+      "id": "AC-0002",
+      "role": "invalid-token",
+      "category": "JWT Validation",
+      "method": "POST",
+      "endpoint": "/api/auth/logout",
+      "rule": "Authentication control failure: invalid-token received HTTP 200 for POST /api/auth/logout; expected HTTP status 401, 403, 302.",
+      "expected": "401, 403, 302",
+      "actual": "200",
+      "status": "FAIL",
+      "finding": "Authentication control failure: invalid-token received HTTP 200 for POST /api/auth/logout; expected HTTP status 401, 403, 302.",
+      "error": "",
+      "evidence": "HTTP 200 from POST /api/auth/logout",
+      "request_url": "https://securehub-di8a.onrender.com/api/auth/logout",
+      "response_body": {
+        "message": "Logout successful",
+        "success": true
+      }
+    },
+    {
+      "id": "AC-0003",
+      "role": "admin",
+      "category": "Authorization",
+      "method": "POST",
+      "endpoint": "/api/auth/logout",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from POST /api/auth/logout",
+      "request_url": "https://securehub-di8a.onrender.com/api/auth/logout",
+      "response_body": {
+        "message": "Logout successful",
+        "success": true
+      }
+    },
+    {
+      "id": "AC-0004",
+      "role": "user",
+      "category": "Authorization",
+      "method": "POST",
+      "endpoint": "/api/auth/logout",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from POST /api/auth/logout",
+      "request_url": "https://securehub-di8a.onrender.com/api/auth/logout",
+      "response_body": {
+        "message": "Logout successful",
+        "success": true
+      }
+    },
+    {
+      "id": "AC-0005",
+      "role": "anonymous",
+      "category": "Authentication",
+      "method": "GET",
+      "endpoint": "/api/users",
+      "rule": "Control evaluated",
+      "expected": "401, 403, 302",
+      "actual": "302",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 302 from GET /api/users",
+      "request_url": "https://securehub-di8a.onrender.com/api/users",
+      "response_body": "<!doctype html>\n<html lang=en>\n<title>Redirecting...</title>\n<h1>Redirecting...</h1>\n<p>You should be redirected automatically to the target URL: <a href=\"/login?next=%2Fapi%2Fusers\">/login?next=%2Fapi%2Fusers</a>. If not, click the link.\n"
+    },
+    {
+      "id": "AC-0006",
+      "role": "invalid-token",
+      "category": "JWT Validation",
+      "method": "GET",
+      "endpoint": "/api/users",
+      "rule": "Control evaluated",
+      "expected": "401, 403, 302",
+      "actual": "302",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 302 from GET /api/users",
+      "request_url": "https://securehub-di8a.onrender.com/api/users",
+      "response_body": "<!doctype html>\n<html lang=en>\n<title>Redirecting...</title>\n<h1>Redirecting...</h1>\n<p>You should be redirected automatically to the target URL: <a href=\"/login?next=%2Fapi%2Fusers\">/login?next=%2Fapi%2Fusers</a>. If not, click the link.\n"
+    },
+    {
+      "id": "AC-0007",
+      "role": "admin",
+      "category": "Authorization",
+      "method": "GET",
+      "endpoint": "/api/users",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from GET /api/users",
+      "request_url": "https://securehub-di8a.onrender.com/api/users",
+      "response_body": [
+        {
+          "created_at": "2026-10-06 10:15:00",
+          "department_id": 1,
+          "department_name": "IT",
+          "email": "alice@securehub.internal",
+          "id": 1,
+          "role": "User",
+          "username": "alice"
+        },
+        {
+          "created_at": "2026-10-06 10:15:01",
+          "department_id": 2,
+          "department_name": "Finance",
+          "email": "bob@securehub.internal",
+          "id": 2,
+          "role": "Manager",
+          "username": "bob"
+        },
+        {
+          "created_at": "2026-10-06 10:15:01",
+          "department_id": 1,
+          "department_name": "IT",
+          "email": "admin@securehub.internal",
+          "id": 3,
+          "role": "Admin",
+          "username": "admin"
+        },
+        {
+          "created_at": "2026-10-06 10:15:02",
+          "department_id": 3,
+          "department_name": "HR",
+          "email": "charlie@securehub.internal",
+          "id": 4,
+          "role": "User",
+          "username": "charlie"
+        },
+        {
+          "created_at": "2026-10-06 10:15:03",
+          "department_id": 4,
+          "department_name": "Sales",
+          "email": "david@securehub.internal",
+          "id": 5,
+          "role": "User",
+          "username": "david"
+        },
+        {
+          "created_at": "2026-10-06 10:15:04",
+          "department_id": 3,
+          "department_name": "HR",
+          "email": "emma@securehub.internal",
+          "id": 6,
+          "role": "Manager",
+          "username": "emma"
+        },
+        {
+          "created_at": "2026-10-06 10:15:04",
+          "department_id": 2,
+          "department_name": "Finance",
+          "email": "frank@securehub.internal",
+          "id": 7,
+          "role": "User",
+          "username": "frank"
+        },
+        {
+          "created_at": "2026-10-06 10:15:05",
+          "department_id": 4,
+          "department_name": "Sales",
+          "email": "grace@securehub.internal",
+          "id": 8,
+          "role": "User",
+          "username": "grace"
+        },
+        {
+          "created_at": "2026-10-06 10:15:06",
+          "department_id": 1,
+          "department_name": "IT",
+          "email": "henry@securehub.internal",
+          "id": 9,
+          "role": "Manager",
+          "username": "henry"
+        },
+        {
+          "created_at": "2026-10-06 10:15:07",
+          "department_id": 5,
+          "department_name": "Operations",
+          "email": "isla@securehub.internal",
+          "id": 10,
+          "role": "User",
+          "username": "isla"
+        }
+      ]
+    },
+    {
+      "id": "AC-0008",
+      "role": "user",
+      "category": "Authorization",
+      "method": "GET",
+      "endpoint": "/api/users",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from GET /api/users",
+      "request_url": "https://securehub-di8a.onrender.com/api/users",
+      "response_body": [
+        {
+          "department_name": "IT",
+          "id": 1,
+          "username": "alice"
+        },
+        {
+          "department_name": "Finance",
+          "id": 2,
+          "username": "bob"
+        },
+        {
+          "department_name": "IT",
+          "id": 3,
+          "username": "admin"
+        },
+        {
+          "department_name": "HR",
+          "id": 4,
+          "username": "charlie"
+        },
+        {
+          "department_name": "Sales",
+          "id": 5,
+          "username": "david"
+        },
+        {
+          "department_name": "HR",
+          "id": 6,
+          "username": "emma"
+        },
+        {
+          "department_name": "Finance",
+          "id": 7,
+          "username": "frank"
+        },
+        {
+          "department_name": "Sales",
+          "id": 8,
+          "username": "grace"
+        },
+        {
+          "department_name": "IT",
+          "id": 9,
+          "username": "henry"
+        },
+        {
+          "department_name": "Operations",
+          "id": 10,
+          "username": "isla"
+        }
+      ]
+    },
+    {
+      "id": "AC-0009",
+      "role": "anonymous",
+      "category": "Authentication",
+      "method": "GET",
+      "endpoint": "/api/orders",
+      "rule": "Control evaluated",
+      "expected": "401, 403, 302",
+      "actual": "302",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 302 from GET /api/orders",
+      "request_url": "https://securehub-di8a.onrender.com/api/orders",
+      "response_body": "<!doctype html>\n<html lang=en>\n<title>Redirecting...</title>\n<h1>Redirecting...</h1>\n<p>You should be redirected automatically to the target URL: <a href=\"/login?next=%2Fapi%2Forders\">/login?next=%2Fapi%2Forders</a>. If not, click the link.\n"
+    },
+    {
+      "id": "AC-0010",
+      "role": "invalid-token",
+      "category": "JWT Validation",
+      "method": "GET",
+      "endpoint": "/api/orders",
+      "rule": "Control evaluated",
+      "expected": "401, 403, 302",
+      "actual": "302",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 302 from GET /api/orders",
+      "request_url": "https://securehub-di8a.onrender.com/api/orders",
+      "response_body": "<!doctype html>\n<html lang=en>\n<title>Redirecting...</title>\n<h1>Redirecting...</h1>\n<p>You should be redirected automatically to the target URL: <a href=\"/login?next=%2Fapi%2Forders\">/login?next=%2Fapi%2Forders</a>. If not, click the link.\n"
+    },
+    {
+      "id": "AC-0011",
+      "role": "admin",
+      "category": "Authorization",
+      "method": "GET",
+      "endpoint": "/api/orders",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from GET /api/orders",
+      "request_url": "https://securehub-di8a.onrender.com/api/orders",
+      "response_body": [
+        {
+          "created_at": "2026-10-06 10:15:07",
+          "department_id": 5,
+          "department_name": "Operations",
+          "description": "SOC Monitoring Wall Monitors",
+          "id": 10,
+          "order_number": "ORD-2026-010",
+          "status": "Pending",
+          "user_id": 10,
+          "user_name": "isla"
+        },
+        {
+          "created_at": "2026-10-06 10:15:07",
+          "department_id": 1,
+          "department_name": "IT",
+          "description": "Enterprise Switch Refresh Kit",
+          "id": 9,
+          "order_number": "ORD-2026-009",
+          "status": "Approved",
+          "user_id": 9,
+          "user_name": "henry"
+        },
+        {
+          "created_at": "2026-10-06 10:15:07",
+          "department_id": 4,
+          "department_name": "Sales",
+          "description": "Field Sales Tablet Devices x8",
+          "id": 8,
+          "order_number": "ORD-2026-008",
+          "status": "Pending",
+          "user_id": 8,
+          "user_name": "grace"
+        },
+        {
+          "created_at": "2026-10-06 10:15:07",
+          "department_id": 2,
+          "department_name": "Finance",
+          "description": "Tax Filing Database Backup Drive",
+          "id": 7,
+          "order_number": "ORD-2026-007",
+          "status": "Completed",
+          "user_id": 7,
+          "user_name": "frank"
+        },
+        {
+          "created_at": "2026-10-06 10:15:07",
+          "department_id": 3,
+          "department_name": "HR",
+          "description": "Payroll Encryption Module License",
+          "id": 6,
+          "order_number": "ORD-2026-006",
+          "status": "Approved",
+          "user_id": 6,
+          "user_name": "emma"
+        },
+        {
+          "created_at": "2026-10-06 10:15:07",
+          "department_id": 4,
+          "department_name": "Sales",
+          "description": "Client CRM Terminal Upgrades",
+          "id": 5,
+          "order_number": "ORD-2026-005",
+          "status": "Pending",
+          "user_id": 5,
+          "user_name": "david"
+        },
+        {
+          "created_at": "2026-10-06 10:15:07",
+          "department_id": 1,
+          "department_name": "IT",
+          "description": "Core Firewall Appliance Backup",
+          "id": 4,
+          "order_number": "ORD-2026-004",
+          "status": "Shipped",
+          "user_id": 3,
+          "user_name": "admin"
+        },
+        {
+          "created_at": "2026-10-06 10:15:07",
+          "department_id": 3,
+          "department_name": "HR",
+          "description": "HR Onboarding Workstations x5",
+          "id": 3,
+          "order_number": "ORD-2026-003",
+          "status": "Pending",
+          "user_id": 4,
+          "user_name": "charlie"
+        },
+        {
+          "created_at": "2026-10-06 10:15:07",
+          "department_id": 2,
+          "department_name": "Finance",
+          "description": "Financial Ledger Audit Server",
+          "id": 2,
+          "order_number": "ORD-2026-002",
+          "status": "Approved",
+          "user_id": 2,
+          "user_name": "bob"
+        },
+        {
+          "created_at": "2026-10-06 10:15:07",
+          "department_id": 1,
+          "department_name": "IT",
+          "description": "HSM Security Key Tokens",
+          "id": 1,
+          "order_number": "ORD-2026-001",
+          "status": "Completed",
+          "user_id": 1,
+          "user_name": "alice"
+        }
+      ]
+    },
+    {
+      "id": "AC-0012",
+      "role": "user",
+      "category": "Authorization",
+      "method": "GET",
+      "endpoint": "/api/orders",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from GET /api/orders",
+      "request_url": "https://securehub-di8a.onrender.com/api/orders",
+      "response_body": [
+        {
+          "created_at": "2026-10-06 10:15:07",
+          "department_id": 3,
+          "department_name": "HR",
+          "description": "HR Onboarding Workstations x5",
+          "id": 3,
+          "order_number": "ORD-2026-003",
+          "status": "Pending",
+          "user_id": 4,
+          "user_name": "charlie"
+        }
+      ]
+    },
+    {
+      "id": "AC-0013",
+      "role": "anonymous",
+      "category": "Authentication",
+      "method": "GET",
+      "endpoint": "/api/documents",
+      "rule": "Control evaluated",
+      "expected": "401, 403, 302",
+      "actual": "302",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 302 from GET /api/documents",
+      "request_url": "https://securehub-di8a.onrender.com/api/documents",
+      "response_body": "<!doctype html>\n<html lang=en>\n<title>Redirecting...</title>\n<h1>Redirecting...</h1>\n<p>You should be redirected automatically to the target URL: <a href=\"/login?next=%2Fapi%2Fdocuments\">/login?next=%2Fapi%2Fdocuments</a>. If not, click the link.\n"
+    },
+    {
+      "id": "AC-0014",
+      "role": "invalid-token",
+      "category": "JWT Validation",
+      "method": "GET",
+      "endpoint": "/api/documents",
+      "rule": "Control evaluated",
+      "expected": "401, 403, 302",
+      "actual": "302",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 302 from GET /api/documents",
+      "request_url": "https://securehub-di8a.onrender.com/api/documents",
+      "response_body": "<!doctype html>\n<html lang=en>\n<title>Redirecting...</title>\n<h1>Redirecting...</h1>\n<p>You should be redirected automatically to the target URL: <a href=\"/login?next=%2Fapi%2Fdocuments\">/login?next=%2Fapi%2Fdocuments</a>. If not, click the link.\n"
+    },
+    {
+      "id": "AC-0015",
+      "role": "admin",
+      "category": "Authorization",
+      "method": "GET",
+      "endpoint": "/api/documents",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from GET /api/documents",
+      "request_url": "https://securehub-di8a.onrender.com/api/documents",
+      "response_body": [
+        {
+          "content": "Classification: RESTRICTED\n\nDaily log of visitor access passes and biometric verification...",
+          "created_at": "2026-10-06 10:15:07",
+          "description": "Facility badge swipe records for datacenter floor.",
+          "id": 9,
+          "owner_id": 10,
+          "owner_name": "isla",
+          "title": "Operations Physical Access Log"
+        },
+        {
+          "content": "Classification: CONFIDENTIAL\n\nDiagram of core switches, DMZ hosts, and internal jump boxes...",
+          "created_at": "2026-10-06 10:15:07",
+          "description": "VLAN subnet layout and edge firewall rules.",
+          "id": 8,
+          "owner_id": 9,
+          "owner_name": "henry",
+          "title": "IT Network Infrastructure Map"
+        },
+        {
+          "content": "Classification: PUBLIC\n\nTemplate terms for mutual non-disclosure of pricing tier structures...",
+          "created_at": "2026-10-06 10:15:07",
+          "description": "Standard agreement form for vendor partners.",
+          "id": 7,
+          "owner_id": 8,
+          "owner_name": "grace",
+          "title": "Regional Sales Contract NDA Template"
+        },
+        {
+          "content": "Classification: INTERNAL\n\nVerification steps for encrypted tax archive storage...",
+          "created_at": "2026-10-06 10:15:07",
+          "description": "Overview of state and federal tax data requirements.",
+          "id": 6,
+          "owner_id": 7,
+          "owner_name": "frank",
+          "title": "Tax Regulation Compliance Summary"
+        },
+        {
+          "content": "Classification: RESTRICTED\n\nImmediate checklist for deactivating active Directory credentials...",
+          "created_at": "2026-10-06 10:15:07",
+          "description": "Revocation matrix for departed personnel.",
+          "id": 5,
+          "owner_id": 6,
+          "owner_name": "emma",
+          "title": "HR Employee Offboarding Security"
+        },
+        {
+          "content": "Classification: INTERNAL\n\nStandard protocol for storing customer PII in cloud databases...",
+          "created_at": "2026-10-06 10:15:07",
+          "description": "Guidance on handling client NDA materials.",
+          "id": 4,
+          "owner_id": 5,
+          "owner_name": "david",
+          "title": "Sales Client Data Security Standards"
+        },
+        {
+          "content": "Classification: TOP SECRET\n\nRoot key custodians list and HSM backup verification hashes...",
+          "created_at": "2026-10-06 10:15:07",
+          "description": "Root CA & Vault master key ceremony logs.",
+          "id": 3,
+          "owner_id": 3,
+          "owner_name": "admin",
+          "title": "Enterprise Key Management Audit"
+        },
+        {
+          "content": "Classification: CONFIDENTIAL\n\nFinancial ledger encryption standards and audit trail policies...",
+          "created_at": "2026-10-06 10:15:07",
+          "description": "Managerial overview of quarterly accounting security.",
+          "id": 2,
+          "owner_id": 2,
+          "owner_name": "bob",
+          "title": "Q3 Financial Audit Strategy"
+        },
+        {
+          "content": "Classification: RESTRICTED\n\nSteps for initial containment of endpoint intrusions...",
+          "created_at": "2026-10-06 10:15:07",
+          "description": "Confidential IR procedure for Tier 1 analysts.",
+          "id": 1,
+          "owner_id": 1,
+          "owner_name": "alice",
+          "title": "Alice's Incident Response Plan"
+        }
+      ]
+    },
+    {
+      "id": "AC-0016",
+      "role": "user",
+      "category": "Authorization",
+      "method": "GET",
+      "endpoint": "/api/documents",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from GET /api/documents",
+      "request_url": "https://securehub-di8a.onrender.com/api/documents",
+      "response_body": []
+    },
+    {
+      "id": "AC-0017",
+      "role": "anonymous",
+      "category": "Authentication",
+      "method": "GET",
+      "endpoint": "/api/documents/{doc_id}",
+      "rule": "Control evaluated",
+      "expected": "401, 403, 302",
+      "actual": "302",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 302 from GET /api/documents/9",
+      "request_url": "https://securehub-di8a.onrender.com/api/documents/9",
+      "response_body": "<!doctype html>\n<html lang=en>\n<title>Redirecting...</title>\n<h1>Redirecting...</h1>\n<p>You should be redirected automatically to the target URL: <a href=\"/login?next=%2Fapi%2Fdocuments%2F9\">/login?next=%2Fapi%2Fdocuments%2F9</a>. If not, click the link.\n"
+    },
+    {
+      "id": "AC-0018",
+      "role": "invalid-token",
+      "category": "JWT Validation",
+      "method": "GET",
+      "endpoint": "/api/documents/{doc_id}",
+      "rule": "Control evaluated",
+      "expected": "401, 403, 302",
+      "actual": "302",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 302 from GET /api/documents/9",
+      "request_url": "https://securehub-di8a.onrender.com/api/documents/9",
+      "response_body": "<!doctype html>\n<html lang=en>\n<title>Redirecting...</title>\n<h1>Redirecting...</h1>\n<p>You should be redirected automatically to the target URL: <a href=\"/login?next=%2Fapi%2Fdocuments%2F9\">/login?next=%2Fapi%2Fdocuments%2F9</a>. If not, click the link.\n"
+    },
+    {
+      "id": "AC-0019",
+      "role": "admin",
+      "category": "Horizontal Authorization / IDOR",
+      "method": "GET",
+      "endpoint": "/api/documents/{doc_id}",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from GET /api/documents/9",
+      "request_url": "https://securehub-di8a.onrender.com/api/documents/9",
+      "response_body": {
+        "content": "Classification: RESTRICTED\n\nDaily log of visitor access passes and biometric verification...",
+        "created_at": "2026-10-06 10:15:07",
+        "description": "Facility badge swipe records for datacenter floor.",
+        "id": 9,
+        "owner_id": 10,
+        "owner_name": "isla",
+        "title": "Operations Physical Access Log"
+      }
+    },
+    {
+      "id": "AC-0020",
+      "role": "admin",
+      "category": "Horizontal Authorization / IDOR",
+      "method": "GET",
+      "endpoint": "/api/documents/{doc_id}",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from GET /api/documents/8",
+      "request_url": "https://securehub-di8a.onrender.com/api/documents/8",
+      "response_body": {
+        "content": "Classification: CONFIDENTIAL\n\nDiagram of core switches, DMZ hosts, and internal jump boxes...",
+        "created_at": "2026-10-06 10:15:07",
+        "description": "VLAN subnet layout and edge firewall rules.",
+        "id": 8,
+        "owner_id": 9,
+        "owner_name": "henry",
+        "title": "IT Network Infrastructure Map"
+      }
+    },
+    {
+      "id": "AC-0021",
+      "role": "anonymous",
+      "category": "Authentication",
+      "method": "GET",
+      "endpoint": "/api/tickets",
+      "rule": "Control evaluated",
+      "expected": "401, 403, 302",
+      "actual": "302",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 302 from GET /api/tickets",
+      "request_url": "https://securehub-di8a.onrender.com/api/tickets",
+      "response_body": "<!doctype html>\n<html lang=en>\n<title>Redirecting...</title>\n<h1>Redirecting...</h1>\n<p>You should be redirected automatically to the target URL: <a href=\"/login?next=%2Fapi%2Ftickets\">/login?next=%2Fapi%2Ftickets</a>. If not, click the link.\n"
+    },
+    {
+      "id": "AC-0022",
+      "role": "invalid-token",
+      "category": "JWT Validation",
+      "method": "GET",
+      "endpoint": "/api/tickets",
+      "rule": "Control evaluated",
+      "expected": "401, 403, 302",
+      "actual": "302",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 302 from GET /api/tickets",
+      "request_url": "https://securehub-di8a.onrender.com/api/tickets",
+      "response_body": "<!doctype html>\n<html lang=en>\n<title>Redirecting...</title>\n<h1>Redirecting...</h1>\n<p>You should be redirected automatically to the target URL: <a href=\"/login?next=%2Fapi%2Ftickets\">/login?next=%2Fapi%2Ftickets</a>. If not, click the link.\n"
+    },
+    {
+      "id": "AC-0023",
+      "role": "admin",
+      "category": "Authorization",
+      "method": "GET",
+      "endpoint": "/api/tickets",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from GET /api/tickets",
+      "request_url": "https://securehub-di8a.onrender.com/api/tickets",
+      "response_body": [
+        {
+          "assigned_to": 9,
+          "assignee_name": "henry",
+          "created_at": "2026-10-06 10:15:07",
+          "created_by": 10,
+          "creator_name": "isla",
+          "description": "Secondary HVAC unit reporting temperature spike in Rack B4.",
+          "id": 6,
+          "priority": "Critical",
+          "status": "Open",
+          "title": "Datacenter Air Handler Alarm"
+        },
+        {
+          "assigned_to": 6,
+          "assignee_name": "emma",
+          "created_at": "2026-10-06 10:15:07",
+          "created_by": 7,
+          "creator_name": "frank",
+          "description": "Requesting annual access validation report for quarterly audit.",
+          "id": 5,
+          "priority": "Low",
+          "status": "In Progress",
+          "title": "Finance User Access Review"
+        },
+        {
+          "assigned_to": 9,
+          "assignee_name": "henry",
+          "created_at": "2026-10-06 10:15:07",
+          "created_by": 5,
+          "creator_name": "david",
+          "description": "Cannot connect to internal enterprise wireless SSID.",
+          "id": 4,
+          "priority": "High",
+          "status": "Open",
+          "title": "Sales Laptop Wi-Fi Certificate Expired"
+        },
+        {
+          "assigned_to": 3,
+          "assignee_name": "admin",
+          "created_at": "2026-10-06 10:15:07",
+          "created_by": 2,
+          "creator_name": "bob",
+          "description": "Patch critical CVE-2026-9901 vulnerability on edge database router.",
+          "id": 3,
+          "priority": "Critical",
+          "status": "Resolved",
+          "title": "Upgrade Financial Database Firmware"
+        },
+        {
+          "assigned_to": 3,
+          "assignee_name": "admin",
+          "created_at": "2026-10-06 10:15:07",
+          "created_by": 4,
+          "creator_name": "charlie",
+          "description": "Locked out of CRM portal after multiple failed attempts.",
+          "id": 2,
+          "priority": "Medium",
+          "status": "Open",
+          "title": "HR Portal Password Reset Issue"
+        },
+        {
+          "assigned_to": 9,
+          "assignee_name": "henry",
+          "created_at": "2026-10-06 10:15:07",
+          "created_by": 1,
+          "creator_name": "alice",
+          "description": "Need temporary VPN credentials configured for audit team.",
+          "id": 1,
+          "priority": "High",
+          "status": "In Progress",
+          "title": "VPN Access Request for Contractor"
+        }
+      ]
+    },
+    {
+      "id": "AC-0024",
+      "role": "user",
+      "category": "Authorization",
+      "method": "GET",
+      "endpoint": "/api/tickets",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from GET /api/tickets",
+      "request_url": "https://securehub-di8a.onrender.com/api/tickets",
+      "response_body": [
+        {
+          "assigned_to": 3,
+          "assignee_name": "admin",
+          "created_at": "2026-10-06 10:15:07",
+          "created_by": 4,
+          "creator_name": "charlie",
+          "description": "Locked out of CRM portal after multiple failed attempts.",
+          "id": 2,
+          "priority": "Medium",
+          "status": "Open",
+          "title": "HR Portal Password Reset Issue"
+        }
+      ]
+    },
+    {
+      "id": "AC-0025",
+      "role": "anonymous",
+      "category": "Authentication",
+      "method": "GET",
+      "endpoint": "/api/reports",
+      "rule": "Control evaluated",
+      "expected": "401, 403, 302",
+      "actual": "302",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 302 from GET /api/reports",
+      "request_url": "https://securehub-di8a.onrender.com/api/reports",
+      "response_body": "<!doctype html>\n<html lang=en>\n<title>Redirecting...</title>\n<h1>Redirecting...</h1>\n<p>You should be redirected automatically to the target URL: <a href=\"/login?next=%2Fapi%2Freports\">/login?next=%2Fapi%2Freports</a>. If not, click the link.\n"
+    },
+    {
+      "id": "AC-0026",
+      "role": "invalid-token",
+      "category": "JWT Validation",
+      "method": "GET",
+      "endpoint": "/api/reports",
+      "rule": "Control evaluated",
+      "expected": "401, 403, 302",
+      "actual": "302",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 302 from GET /api/reports",
+      "request_url": "https://securehub-di8a.onrender.com/api/reports",
+      "response_body": "<!doctype html>\n<html lang=en>\n<title>Redirecting...</title>\n<h1>Redirecting...</h1>\n<p>You should be redirected automatically to the target URL: <a href=\"/login?next=%2Fapi%2Freports\">/login?next=%2Fapi%2Freports</a>. If not, click the link.\n"
+    },
+    {
+      "id": "AC-0027",
+      "role": "admin",
+      "category": "Authorization",
+      "method": "GET",
+      "endpoint": "/api/reports",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from GET /api/reports",
+      "request_url": "https://securehub-di8a.onrender.com/api/reports",
+      "response_body": [
+        {
+          "created_at": "2026-10-06 10:15:07",
+          "created_by": 9,
+          "creator_name": "henry",
+          "description": "External port scan and penetration testing summary.",
+          "id": 5,
+          "status": "Published",
+          "title": "IT Perimeter Vulnerability Assessment"
+        },
+        {
+          "created_at": "2026-10-06 10:15:07",
+          "created_by": 6,
+          "creator_name": "emma",
+          "description": "Evaluation of employee personal record retention policies.",
+          "id": 4,
+          "status": "Published",
+          "title": "HR Privacy & GDPR Audit Report"
+        },
+        {
+          "created_at": "2026-10-06 10:15:07",
+          "created_by": 3,
+          "creator_name": "admin",
+          "description": "Auditor findings and security control efficacy summary.",
+          "id": 3,
+          "status": "Published",
+          "title": "Annual SOC 2 Type II Compliance Audit"
+        },
+        {
+          "created_at": "2026-10-06 10:15:07",
+          "created_by": 1,
+          "creator_name": "alice",
+          "description": "Q3 employee security awareness training click-through stats.",
+          "id": 2,
+          "status": "Draft",
+          "title": "Phishing Simulation Campaign Results"
+        },
+        {
+          "created_at": "2026-10-06 10:15:07",
+          "created_by": 2,
+          "creator_name": "bob",
+          "description": "Scan report covering accounting databases and export nodes.",
+          "id": 1,
+          "status": "Published",
+          "title": "Monthly Financial Risk Assessment"
+        }
+      ]
+    },
+    {
+      "id": "AC-0028",
+      "role": "user",
+      "category": "Authorization",
+      "method": "GET",
+      "endpoint": "/api/reports",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from GET /api/reports",
+      "request_url": "https://securehub-di8a.onrender.com/api/reports",
+      "response_body": []
+    },
+    {
+      "id": "AC-0029",
+      "role": "anonymous",
+      "category": "Authentication",
+      "method": "GET",
+      "endpoint": "/api/notifications",
+      "rule": "Control evaluated",
+      "expected": "401, 403, 302",
+      "actual": "302",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 302 from GET /api/notifications",
+      "request_url": "https://securehub-di8a.onrender.com/api/notifications",
+      "response_body": "<!doctype html>\n<html lang=en>\n<title>Redirecting...</title>\n<h1>Redirecting...</h1>\n<p>You should be redirected automatically to the target URL: <a href=\"/login?next=%2Fapi%2Fnotifications\">/login?next=%2Fapi%2Fnotifications</a>. If not, click the link.\n"
+    },
+    {
+      "id": "AC-0030",
+      "role": "invalid-token",
+      "category": "JWT Validation",
+      "method": "GET",
+      "endpoint": "/api/notifications",
+      "rule": "Control evaluated",
+      "expected": "401, 403, 302",
+      "actual": "302",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 302 from GET /api/notifications",
+      "request_url": "https://securehub-di8a.onrender.com/api/notifications",
+      "response_body": "<!doctype html>\n<html lang=en>\n<title>Redirecting...</title>\n<h1>Redirecting...</h1>\n<p>You should be redirected automatically to the target URL: <a href=\"/login?next=%2Fapi%2Fnotifications\">/login?next=%2Fapi%2Fnotifications</a>. If not, click the link.\n"
+    },
+    {
+      "id": "AC-0031",
+      "role": "admin",
+      "category": "Authorization",
+      "method": "GET",
+      "endpoint": "/api/notifications",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from GET /api/notifications",
+      "request_url": "https://securehub-di8a.onrender.com/api/notifications",
+      "response_body": []
+    },
+    {
+      "id": "AC-0032",
+      "role": "user",
+      "category": "Authorization",
+      "method": "GET",
+      "endpoint": "/api/notifications",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from GET /api/notifications",
+      "request_url": "https://securehub-di8a.onrender.com/api/notifications",
+      "response_body": [
+        {
+          "created_at": "2026-10-06 10:15:07",
+          "id": 4,
+          "is_read": false,
+          "message": "Your password reset ticket #2 is currently Open.",
+          "user_id": 4
+        }
+      ]
+    }
+  ]
+}

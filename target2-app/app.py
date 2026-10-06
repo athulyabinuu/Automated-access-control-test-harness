@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, session
 from functools import wraps
+import os
 import jwt
 from datetime import datetime, timedelta
 
@@ -18,7 +19,7 @@ users = {
     "admin": {
         "id": 1,
         "username": "admin",
-        "password": "admin123",
+        "password": os.getenv("TARGET2_ADMIN_PASSWORD", "admin123"),
         "role": "admin",
         "email": "admin@target2.local"
     },
@@ -26,7 +27,7 @@ users = {
     "user1": {
         "id": 2,
         "username": "user1",
-        "password": "user123",
+        "password": os.getenv("TARGET2_USER_PASSWORD", "user123"),
         "role": "user",
         "email": "user1@target2.local"
     },
@@ -34,7 +35,7 @@ users = {
     "user2": {
         "id": 3,
         "username": "user2",
-        "password": "user123",
+        "password": os.getenv("TARGET2_USER_PASSWORD", "user123"),
         "role": "user",
         "email": "user2@target2.local"
     }

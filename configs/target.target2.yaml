@@ -1,0 +1,53 @@
+name: Website Target 2
+
+base_url: http://127.0.0.1:5001
+
+openapi_file: openapi.yaml
+
+role_matrix_file: role_matrix_target2.yaml
+web_role_matrix_file: web_role_matrix_target2.yaml
+
+allow_destructive: true
+
+authentication:
+  type: jwt
+
+  login:
+    method: POST
+    path: /api/login
+
+    username_field: username
+    password_field: password
+
+web_authentication:
+  type: session
+
+  login:
+    method: POST
+    path: /login
+    username_field: username
+    password_field: password
+
+  logout:
+    method: GET
+    path: /logout
+
+accounts:
+  - name: admin
+    role: admin
+    username_env: ADMIN_USERNAME
+    password_env: ADMIN_PASSWORD
+
+  - name: user
+    role: user
+    username_env: USER_USERNAME
+    password_env: USER_PASSWORD
+
+resources:
+  user:
+    own: "2"
+    other: "3"
+
+  order:
+    own: "101"
+    other: "102"

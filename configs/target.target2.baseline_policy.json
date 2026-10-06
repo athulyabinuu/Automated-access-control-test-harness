@@ -1,0 +1,38 @@
+{
+  "roles": {
+    "admin": {
+      "GET /": {
+        "access": "allow"
+      },
+      "GET /api/products": {
+        "access": "allow"
+      },
+      "GET /api/me": {
+        "access": "allow"
+      },
+      "GET /api/admin/users": {
+        "access": "allow"
+      },
+      "GET /api/admin/stats": {
+        "access": "allow"
+      }
+    },
+    "user": {
+      "GET /": {
+        "access": "allow"
+      },
+      "GET /api/products": {
+        "access": "allow"
+      },
+      "GET /api/me": {
+        "access": "allow"
+      },
+      "GET /api/admin/users": {
+        "access": "deny"
+      },
+      "GET /api/admin/stats": {
+        "access": "deny"
+      }
+    }
+  }
+}

@@ -1,0 +1,37 @@
+name: Target 1
+
+base_url: http://127.0.0.1:5000
+
+openapi_file: target1-app/openapi.yaml
+
+role_matrix_file: role_matrix_target1.yaml
+
+authentication:
+  type: jwt
+
+  login:
+    method: POST
+    path: /api/login
+
+    username_field: username
+    password_field: password
+
+accounts:
+  - name: admin
+    role: admin
+    username_env: ADMIN_USERNAME
+    password_env: ADMIN_PASSWORD
+
+  - name: user
+    role: user
+    username_env: USER_USERNAME
+    password_env: USER_PASSWORD
+
+resources:
+  user:
+    own: "2"
+    other: "3"
+
+  order:
+    own: "101"
+    other: "102"

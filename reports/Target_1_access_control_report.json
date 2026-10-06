@@ -1,0 +1,849 @@
+{
+  "report_type": "Automated Access Control Security Test Report",
+  "generated_at": "06 October 2026, 16:20:36",
+  "target": {
+    "name": "Target 1",
+    "base_url": "http://127.0.0.1:5000"
+  },
+  "summary": {
+    "passed": 40,
+    "failed": 0,
+    "skipped": 0,
+    "errors": 0,
+    "total": 40,
+    "overall": "PASS"
+  },
+  "categories": [
+    [
+      "Authentication",
+      {
+        "total": 8,
+        "passed": 8,
+        "failed": 0
+      }
+    ],
+    [
+      "Authorization",
+      {
+        "total": 12,
+        "passed": 12,
+        "failed": 0
+      }
+    ],
+    [
+      "Horizontal Authorization / IDOR",
+      {
+        "total": 12,
+        "passed": 12,
+        "failed": 0
+      }
+    ],
+    [
+      "JWT Validation",
+      {
+        "total": 8,
+        "passed": 8,
+        "failed": 0
+      }
+    ]
+  ],
+  "tests": [
+    {
+      "id": "AC-0001",
+      "role": "admin",
+      "category": "Authorization",
+      "method": "GET",
+      "endpoint": "/",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from GET /",
+      "request_url": "http://127.0.0.1:5000/",
+      "response_body": {
+        "message": "Access Control Test Harness - Target API",
+        "status": "running"
+      }
+    },
+    {
+      "id": "AC-0002",
+      "role": "user",
+      "category": "Authorization",
+      "method": "GET",
+      "endpoint": "/",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from GET /",
+      "request_url": "http://127.0.0.1:5000/",
+      "response_body": {
+        "message": "Access Control Test Harness - Target API",
+        "status": "running"
+      }
+    },
+    {
+      "id": "AC-0003",
+      "role": "admin",
+      "category": "Authorization",
+      "method": "GET",
+      "endpoint": "/api/products",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from GET /api/products",
+      "request_url": "http://127.0.0.1:5000/api/products",
+      "response_body": {
+        "products": [
+          {
+            "id": 1,
+            "name": "Laptop"
+          },
+          {
+            "id": 2,
+            "name": "Keyboard"
+          },
+          {
+            "id": 3,
+            "name": "Mouse"
+          }
+        ]
+      }
+    },
+    {
+      "id": "AC-0004",
+      "role": "user",
+      "category": "Authorization",
+      "method": "GET",
+      "endpoint": "/api/products",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from GET /api/products",
+      "request_url": "http://127.0.0.1:5000/api/products",
+      "response_body": {
+        "products": [
+          {
+            "id": 1,
+            "name": "Laptop"
+          },
+          {
+            "id": 2,
+            "name": "Keyboard"
+          },
+          {
+            "id": 3,
+            "name": "Mouse"
+          }
+        ]
+      }
+    },
+    {
+      "id": "AC-0005",
+      "role": "anonymous",
+      "category": "Authentication",
+      "method": "GET",
+      "endpoint": "/api/me",
+      "rule": "Control evaluated",
+      "expected": "401, 403",
+      "actual": "401",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 401 from GET /api/me",
+      "request_url": "http://127.0.0.1:5000/api/me",
+      "response_body": {
+        "error": "Authorization token required"
+      }
+    },
+    {
+      "id": "AC-0006",
+      "role": "invalid-token",
+      "category": "JWT Validation",
+      "method": "GET",
+      "endpoint": "/api/me",
+      "rule": "Control evaluated",
+      "expected": "401, 403",
+      "actual": "401",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 401 from GET /api/me",
+      "request_url": "http://127.0.0.1:5000/api/me",
+      "response_body": {
+        "error": "Invalid token"
+      }
+    },
+    {
+      "id": "AC-0007",
+      "role": "admin",
+      "category": "Authorization",
+      "method": "GET",
+      "endpoint": "/api/me",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from GET /api/me",
+      "request_url": "http://127.0.0.1:5000/api/me",
+      "response_body": {
+        "id": 1,
+        "role": "admin",
+        "username": "admin"
+      }
+    },
+    {
+      "id": "AC-0008",
+      "role": "user",
+      "category": "Authorization",
+      "method": "GET",
+      "endpoint": "/api/me",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from GET /api/me",
+      "request_url": "http://127.0.0.1:5000/api/me",
+      "response_body": {
+        "id": 2,
+        "role": "user",
+        "username": "user1"
+      }
+    },
+    {
+      "id": "AC-0009",
+      "role": "anonymous",
+      "category": "Authentication",
+      "method": "GET",
+      "endpoint": "/api/users/{user_id}",
+      "rule": "Control evaluated",
+      "expected": "401, 403",
+      "actual": "401",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 401 from GET /api/users/1",
+      "request_url": "http://127.0.0.1:5000/api/users/1",
+      "response_body": {
+        "error": "Authorization token required"
+      }
+    },
+    {
+      "id": "AC-0010",
+      "role": "invalid-token",
+      "category": "JWT Validation",
+      "method": "GET",
+      "endpoint": "/api/users/{user_id}",
+      "rule": "Control evaluated",
+      "expected": "401, 403",
+      "actual": "401",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 401 from GET /api/users/1",
+      "request_url": "http://127.0.0.1:5000/api/users/1",
+      "response_body": {
+        "error": "Invalid token"
+      }
+    },
+    {
+      "id": "AC-0011",
+      "role": "admin",
+      "category": "Horizontal Authorization / IDOR",
+      "method": "GET",
+      "endpoint": "/api/users/{user_id}",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from GET /api/users/1",
+      "request_url": "http://127.0.0.1:5000/api/users/1",
+      "response_body": {
+        "email": "admin@example.com",
+        "id": 1,
+        "username": "admin"
+      }
+    },
+    {
+      "id": "AC-0012",
+      "role": "admin",
+      "category": "Horizontal Authorization / IDOR",
+      "method": "GET",
+      "endpoint": "/api/users/{user_id}",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from GET /api/users/2",
+      "request_url": "http://127.0.0.1:5000/api/users/2",
+      "response_body": {
+        "email": "user1@example.com",
+        "id": 2,
+        "username": "user1"
+      }
+    },
+    {
+      "id": "AC-0013",
+      "role": "user",
+      "category": "Horizontal Authorization / IDOR",
+      "method": "GET",
+      "endpoint": "/api/users/{user_id}",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from GET /api/users/2",
+      "request_url": "http://127.0.0.1:5000/api/users/2",
+      "response_body": {
+        "email": "user1@example.com",
+        "id": 2,
+        "username": "user1"
+      }
+    },
+    {
+      "id": "AC-0014",
+      "role": "user",
+      "category": "Horizontal Authorization / IDOR",
+      "method": "GET",
+      "endpoint": "/api/users/{user_id}",
+      "rule": "Control evaluated",
+      "expected": "401, 403, 404",
+      "actual": "403",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 403 from GET /api/users/1",
+      "request_url": "http://127.0.0.1:5000/api/users/1",
+      "response_body": {
+        "error": "Access denied"
+      }
+    },
+    {
+      "id": "AC-0015",
+      "role": "anonymous",
+      "category": "Authentication",
+      "method": "PATCH",
+      "endpoint": "/api/users/{user_id}",
+      "rule": "Control evaluated",
+      "expected": "401, 403",
+      "actual": "401",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 401 from PATCH /api/users/1",
+      "request_url": "http://127.0.0.1:5000/api/users/1",
+      "response_body": {
+        "error": "Authorization token required"
+      }
+    },
+    {
+      "id": "AC-0016",
+      "role": "invalid-token",
+      "category": "JWT Validation",
+      "method": "PATCH",
+      "endpoint": "/api/users/{user_id}",
+      "rule": "Control evaluated",
+      "expected": "401, 403",
+      "actual": "401",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 401 from PATCH /api/users/1",
+      "request_url": "http://127.0.0.1:5000/api/users/1",
+      "response_body": {
+        "error": "Invalid token"
+      }
+    },
+    {
+      "id": "AC-0017",
+      "role": "admin",
+      "category": "Horizontal Authorization / IDOR",
+      "method": "PATCH",
+      "endpoint": "/api/users/{user_id}",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from PATCH /api/users/1",
+      "request_url": "http://127.0.0.1:5000/api/users/1",
+      "response_body": {
+        "message": "Profile updated successfully",
+        "user": {
+          "email": "admin@example.com",
+          "id": 1,
+          "username": "admin"
+        }
+      }
+    },
+    {
+      "id": "AC-0018",
+      "role": "admin",
+      "category": "Horizontal Authorization / IDOR",
+      "method": "PATCH",
+      "endpoint": "/api/users/{user_id}",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from PATCH /api/users/2",
+      "request_url": "http://127.0.0.1:5000/api/users/2",
+      "response_body": {
+        "message": "Profile updated successfully",
+        "user": {
+          "email": "user1@example.com",
+          "id": 2,
+          "username": "user1"
+        }
+      }
+    },
+    {
+      "id": "AC-0019",
+      "role": "user",
+      "category": "Horizontal Authorization / IDOR",
+      "method": "PATCH",
+      "endpoint": "/api/users/{user_id}",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from PATCH /api/users/2",
+      "request_url": "http://127.0.0.1:5000/api/users/2",
+      "response_body": {
+        "message": "Profile updated successfully",
+        "user": {
+          "email": "user1@example.com",
+          "id": 2,
+          "username": "user1"
+        }
+      }
+    },
+    {
+      "id": "AC-0020",
+      "role": "user",
+      "category": "Horizontal Authorization / IDOR",
+      "method": "PATCH",
+      "endpoint": "/api/users/{user_id}",
+      "rule": "Control evaluated",
+      "expected": "401, 403, 404",
+      "actual": "403",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 403 from PATCH /api/users/1",
+      "request_url": "http://127.0.0.1:5000/api/users/1",
+      "response_body": {
+        "error": "Access denied"
+      }
+    },
+    {
+      "id": "AC-0021",
+      "role": "anonymous",
+      "category": "Authentication",
+      "method": "GET",
+      "endpoint": "/api/orders/{order_id}",
+      "rule": "Control evaluated",
+      "expected": "401, 403",
+      "actual": "401",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 401 from GET /api/orders/101",
+      "request_url": "http://127.0.0.1:5000/api/orders/101",
+      "response_body": {
+        "error": "Authorization token required"
+      }
+    },
+    {
+      "id": "AC-0022",
+      "role": "invalid-token",
+      "category": "JWT Validation",
+      "method": "GET",
+      "endpoint": "/api/orders/{order_id}",
+      "rule": "Control evaluated",
+      "expected": "401, 403",
+      "actual": "401",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 401 from GET /api/orders/101",
+      "request_url": "http://127.0.0.1:5000/api/orders/101",
+      "response_body": {
+        "error": "Invalid token"
+      }
+    },
+    {
+      "id": "AC-0023",
+      "role": "anonymous",
+      "category": "Authentication",
+      "method": "GET",
+      "endpoint": "/api/admin/users",
+      "rule": "Control evaluated",
+      "expected": "401, 403",
+      "actual": "401",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 401 from GET /api/admin/users",
+      "request_url": "http://127.0.0.1:5000/api/admin/users",
+      "response_body": {
+        "error": "Authorization token required"
+      }
+    },
+    {
+      "id": "AC-0024",
+      "role": "invalid-token",
+      "category": "JWT Validation",
+      "method": "GET",
+      "endpoint": "/api/admin/users",
+      "rule": "Control evaluated",
+      "expected": "401, 403",
+      "actual": "401",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 401 from GET /api/admin/users",
+      "request_url": "http://127.0.0.1:5000/api/admin/users",
+      "response_body": {
+        "error": "Invalid token"
+      }
+    },
+    {
+      "id": "AC-0025",
+      "role": "admin",
+      "category": "Authorization",
+      "method": "GET",
+      "endpoint": "/api/admin/users",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from GET /api/admin/users",
+      "request_url": "http://127.0.0.1:5000/api/admin/users",
+      "response_body": {
+        "users": [
+          {
+            "email": "admin@example.com",
+            "id": 1,
+            "username": "admin"
+          },
+          {
+            "email": "user1@example.com",
+            "id": 2,
+            "username": "user1"
+          },
+          {
+            "email": "user2@example.com",
+            "id": 3,
+            "username": "user2"
+          }
+        ]
+      }
+    },
+    {
+      "id": "AC-0026",
+      "role": "user",
+      "category": "Authorization",
+      "method": "GET",
+      "endpoint": "/api/admin/users",
+      "rule": "Control evaluated",
+      "expected": "401, 403, 404",
+      "actual": "403",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 403 from GET /api/admin/users",
+      "request_url": "http://127.0.0.1:5000/api/admin/users",
+      "response_body": {
+        "error": "Admin access required"
+      }
+    },
+    {
+      "id": "AC-0027",
+      "role": "anonymous",
+      "category": "Authentication",
+      "method": "GET",
+      "endpoint": "/api/admin/users/{user_id}",
+      "rule": "Control evaluated",
+      "expected": "401, 403",
+      "actual": "401",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 401 from GET /api/admin/users/1",
+      "request_url": "http://127.0.0.1:5000/api/admin/users/1",
+      "response_body": {
+        "error": "Authorization token required"
+      }
+    },
+    {
+      "id": "AC-0028",
+      "role": "invalid-token",
+      "category": "JWT Validation",
+      "method": "GET",
+      "endpoint": "/api/admin/users/{user_id}",
+      "rule": "Control evaluated",
+      "expected": "401, 403",
+      "actual": "401",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 401 from GET /api/admin/users/1",
+      "request_url": "http://127.0.0.1:5000/api/admin/users/1",
+      "response_body": {
+        "error": "Invalid token"
+      }
+    },
+    {
+      "id": "AC-0029",
+      "role": "admin",
+      "category": "Horizontal Authorization / IDOR",
+      "method": "GET",
+      "endpoint": "/api/admin/users/{user_id}",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from GET /api/admin/users/1",
+      "request_url": "http://127.0.0.1:5000/api/admin/users/1",
+      "response_body": {
+        "email": "admin@example.com",
+        "id": 1,
+        "username": "admin"
+      }
+    },
+    {
+      "id": "AC-0030",
+      "role": "admin",
+      "category": "Horizontal Authorization / IDOR",
+      "method": "GET",
+      "endpoint": "/api/admin/users/{user_id}",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from GET /api/admin/users/2",
+      "request_url": "http://127.0.0.1:5000/api/admin/users/2",
+      "response_body": {
+        "email": "user1@example.com",
+        "id": 2,
+        "username": "user1"
+      }
+    },
+    {
+      "id": "AC-0031",
+      "role": "user",
+      "category": "Authorization",
+      "method": "GET",
+      "endpoint": "/api/admin/users/{user_id}",
+      "rule": "Control evaluated",
+      "expected": "401, 403, 404",
+      "actual": "403",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 403 from GET /api/admin/users/1",
+      "request_url": "http://127.0.0.1:5000/api/admin/users/1",
+      "response_body": {
+        "error": "Admin access required"
+      }
+    },
+    {
+      "id": "AC-0032",
+      "role": "anonymous",
+      "category": "Authentication",
+      "method": "DELETE",
+      "endpoint": "/api/admin/users/{user_id}",
+      "rule": "Control evaluated",
+      "expected": "401, 403",
+      "actual": "401",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 401 from DELETE /api/admin/users/1",
+      "request_url": "http://127.0.0.1:5000/api/admin/users/1",
+      "response_body": {
+        "error": "Authorization token required"
+      }
+    },
+    {
+      "id": "AC-0033",
+      "role": "invalid-token",
+      "category": "JWT Validation",
+      "method": "DELETE",
+      "endpoint": "/api/admin/users/{user_id}",
+      "rule": "Control evaluated",
+      "expected": "401, 403",
+      "actual": "401",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 401 from DELETE /api/admin/users/1",
+      "request_url": "http://127.0.0.1:5000/api/admin/users/1",
+      "response_body": {
+        "error": "Invalid token"
+      }
+    },
+    {
+      "id": "AC-0034",
+      "role": "admin",
+      "category": "Horizontal Authorization / IDOR",
+      "method": "DELETE",
+      "endpoint": "/api/admin/users/{user_id}",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from DELETE /api/admin/users/3",
+      "request_url": "http://127.0.0.1:5000/api/admin/users/3",
+      "response_body": {
+        "message": "User deleted successfully",
+        "user_id": 3
+      }
+    },
+    {
+      "id": "AC-0035",
+      "role": "admin",
+      "category": "Horizontal Authorization / IDOR",
+      "method": "DELETE",
+      "endpoint": "/api/admin/users/{user_id}",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from DELETE /api/admin/users/2",
+      "request_url": "http://127.0.0.1:5000/api/admin/users/2",
+      "response_body": {
+        "message": "User deleted successfully",
+        "user_id": 2
+      }
+    },
+    {
+      "id": "AC-0036",
+      "role": "user",
+      "category": "Authorization",
+      "method": "DELETE",
+      "endpoint": "/api/admin/users/{user_id}",
+      "rule": "Control evaluated",
+      "expected": "401, 403, 404",
+      "actual": "403",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 403 from DELETE /api/admin/users/1",
+      "request_url": "http://127.0.0.1:5000/api/admin/users/1",
+      "response_body": {
+        "error": "Admin access required"
+      }
+    },
+    {
+      "id": "AC-0037",
+      "role": "anonymous",
+      "category": "Authentication",
+      "method": "GET",
+      "endpoint": "/api/admin/stats",
+      "rule": "Control evaluated",
+      "expected": "401, 403",
+      "actual": "401",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 401 from GET /api/admin/stats",
+      "request_url": "http://127.0.0.1:5000/api/admin/stats",
+      "response_body": {
+        "error": "Authorization token required"
+      }
+    },
+    {
+      "id": "AC-0038",
+      "role": "invalid-token",
+      "category": "JWT Validation",
+      "method": "GET",
+      "endpoint": "/api/admin/stats",
+      "rule": "Control evaluated",
+      "expected": "401, 403",
+      "actual": "401",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 401 from GET /api/admin/stats",
+      "request_url": "http://127.0.0.1:5000/api/admin/stats",
+      "response_body": {
+        "error": "Invalid token"
+      }
+    },
+    {
+      "id": "AC-0039",
+      "role": "admin",
+      "category": "Authorization",
+      "method": "GET",
+      "endpoint": "/api/admin/stats",
+      "rule": "Control evaluated",
+      "expected": "200, 201, 202, 204",
+      "actual": "200",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 200 from GET /api/admin/stats",
+      "request_url": "http://127.0.0.1:5000/api/admin/stats",
+      "response_body": {
+        "total_orders": 2,
+        "total_products": 3,
+        "total_users": 3
+      }
+    },
+    {
+      "id": "AC-0040",
+      "role": "user",
+      "category": "Authorization",
+      "method": "GET",
+      "endpoint": "/api/admin/stats",
+      "rule": "Control evaluated",
+      "expected": "401, 403, 404",
+      "actual": "403",
+      "status": "PASS",
+      "finding": "",
+      "error": "",
+      "evidence": "HTTP 403 from GET /api/admin/stats",
+      "request_url": "http://127.0.0.1:5000/api/admin/stats",
+      "response_body": {
+        "error": "Admin access required"
+      }
+    }
+  ]
+}

@@ -1,3 +1,23 @@
+from pathlib import Path
+
+
+# ============================================================
+# Professional terminal colours
+# Terminal colours are kept separate from HTML/PDF colours.
+# ============================================================
+
+TERM_RESET = "\033[0m"
+TERM_BOLD = "\033[1m"
+TERM_DIM = "\033[2m"
+
+TERM_CYAN = "\033[96m"       # Section headings / important information
+TERM_BLUE = "\033[38;5;39m"       # Major headings / separator lines
+TERM_GREEN = "\033[92m"      # PASS / successful operations
+TERM_RED = "\033[91m"        # FAIL
+TERM_GOLD = "\033[93m"       # Warnings / state checks
+TERM_WHITE = "\033[97m"      # Normal test details
+TERM_GRAY = "\033[90m"       # Secondary details
+
 import argparse
 import os
 import sys
@@ -44,10 +64,7 @@ TARGETS = {
 
 def select_target():
 
-    print()
-    print("=" * 60)
-    print("       AUTOMATED ACCESS CONTROL TEST HARNESS")
-    print("=" * 60)
+    terminal_banner("AUTOMATED ACCESS CONTROL TEST HARNESS")
 
     print()
     print("Available targets:")
@@ -77,7 +94,7 @@ def select_target():
                 f"Target URL      : {target['url']}"
             )
 
-            print("=" * 60)
+            print(TERM_BLUE + TERM_BOLD + "=" * 60 + TERM_RESET)
 
             return (
                 target["url"],
@@ -178,30 +195,7 @@ ACTIVE_USERS = USERS
 # TEST RESOURCE IDs
 # ============================================================
 
-RESOURCE_IDS_BY_TARGET = {
-    "Website Target 1": {
-        "own_user": "2",
-        "other_user": "3",
-        "own_order": "101",
-        "other_order": "102",
-    },
-
-    "Website Target 2": {
-        "own_user": "2",
-        "other_user": "3",
-        "own_order": "101",
-        "other_order": "102",
-    },
-
-    "Live Website": {
-        "own_user": "",
-        "other_user": "",
-        "own_order": "",
-        "other_order": "",
-    },
-}
-
-RESOURCE_IDS = RESOURCE_IDS_BY_TARGET.get(TARGET_NAME, {})
+RESOURCE_IDS = {}
 
 # ============================================================
 # COLOURS
@@ -210,6 +204,46 @@ RESOURCE_IDS = RESOURCE_IDS_BY_TARGET.get(TARGET_NAME, {})
 NAVY = "#172554"
 BLUE = "#2563EB"
 BLUE_DARK = "#1D4ED8"
+
+# ============================================================
+# TERMINAL COLOURS
+# ============================================================
+
+ANSI_RESET = "\033[0m"
+ANSI_BOLD = "\033[1m"
+ANSI_BLUE = "\033[94m"
+ANSI_CYAN = "\033[96m"
+ANSI_GREEN = "\033[92m"
+ANSI_RED = "\033[91m"
+ANSI_YELLOW = "\033[93m"
+ANSI_WHITE = "\033[97m"
+ANSI_DIM = "\033[2m"
+
+
+def terminal_banner(title, width=60):
+    print()
+    print(f"{ANSI_BLUE}{ANSI_BOLD}{'=' * width}{ANSI_RESET}")
+    print(
+        f"{ANSI_BLUE}{ANSI_BOLD}"
+        f"{title.center(width)}"
+        f"{ANSI_RESET}"
+    )
+    print(f"{ANSI_BLUE}{ANSI_BOLD}{'=' * width}{ANSI_RESET}")
+
+
+def terminal_heading(title, width=60):
+    print()
+    print(f"{ANSI_BLUE}{ANSI_BOLD}{title}{ANSI_RESET}")
+    print(f"{ANSI_BLUE}{'-' * width}{ANSI_RESET}")
+
+
+def status_colour(status):
+    return {
+        "PASS": ANSI_GREEN,
+        "FAIL": ANSI_RED,
+        "SKIP": ANSI_YELLOW,
+    }.get(status, ANSI_WHITE)
+
 
 GREEN = "#16A34A"
 GREEN_DARK = "#166534"
@@ -1956,15 +1990,15 @@ IDOR Testing
         file.write(html)
 
     print()
-    print("=" * 60)
-    print("HTML REPORT CREATED")
-    print("=" * 60)
+    print(TERM_BLUE + TERM_BOLD + "=" * 60 + TERM_RESET)
+    print(TERM_BLUE + TERM_BOLD + "HTML REPORT CREATED" + TERM_RESET)
+    print(TERM_BLUE + TERM_BOLD + "=" * 60 + TERM_RESET)
 
     print(
         f"Report: {HTML_REPORT}"
     )
 
-    print("=" * 60)
+    print(TERM_BLUE + TERM_BOLD + "=" * 60 + TERM_RESET)
 
 
 # ============================================================
@@ -3066,15 +3100,15 @@ def generate_pdf_report(
     )
 
     print()
-    print("=" * 60)
-    print("PDF REPORT CREATED")
-    print("=" * 60)
+    print(TERM_BLUE + TERM_BOLD + "=" * 60 + TERM_RESET)
+    print(TERM_BLUE + TERM_BOLD + "PDF REPORT CREATED" + TERM_RESET)
+    print(TERM_BLUE + TERM_BOLD + "=" * 60 + TERM_RESET)
 
     print(
         f"Report: {PDF_REPORT}"
     )
 
-    print("=" * 60)
+    print(TERM_BLUE + TERM_BOLD + "=" * 60 + TERM_RESET)
 
 
 # ============================================================
@@ -3096,9 +3130,9 @@ def print_findings(results):
         return
 
     print()
-    print("=" * 60)
+    print(TERM_BLUE + TERM_BOLD + "=" * 60 + TERM_RESET)
     print("SECURITY FINDINGS")
-    print("=" * 60)
+    print(TERM_BLUE + TERM_BOLD + "=" * 60 + TERM_RESET)
 
     for result in findings:
 
@@ -3133,7 +3167,7 @@ def print_findings(results):
             )
 
     print()
-    print("=" * 60)
+    print(TERM_BLUE + TERM_BOLD + "=" * 60 + TERM_RESET)
 
 
 # ============================================================
@@ -3259,13 +3293,13 @@ def run_tests():
         TARGET_NAME = target["name"]
 
         print()
-        print("=" * 60)
+        print(TERM_BLUE + TERM_BOLD + "=" * 60 + TERM_RESET)
         print("       AUTOMATED ACCESS CONTROL TEST HARNESS")
-        print("=" * 60)
+        print(TERM_BLUE + TERM_BOLD + "=" * 60 + TERM_RESET)
         print()
         print(f"Selected target : {TARGET_NAME}")
         print(f"Target URL      : {BASE_URL}")
-        print("=" * 60)
+        print(TERM_BLUE + TERM_BOLD + "=" * 60 + TERM_RESET)
 
     else:
         # Interactive target selection.
@@ -3279,13 +3313,54 @@ def run_tests():
 
     ACTIVE_USERS = USERS
 
-    RESOURCE_IDS = RESOURCE_IDS_BY_TARGET.get(TARGET_NAME)
+    # Load resource identifiers from the target configuration.
+    config_path = Path("configs/target.example.yaml")
 
-    if RESOURCE_IDS is None:
+    if config_path.exists():
+        import yaml
+
+        with config_path.open("r", encoding="utf-8") as file:
+            target_config_data = yaml.safe_load(file) or {}
+
+        configured_resources = target_config_data.get(
+            "resources",
+            {},
+        )
+
+        RESOURCE_IDS = {
+            "own_user": str(
+                configured_resources.get(
+                    "user",
+                    {},
+                ).get("own", "")
+            ),
+            "other_user": str(
+                configured_resources.get(
+                    "user",
+                    {},
+                ).get("other", "")
+            ),
+            "own_order": str(
+                configured_resources.get(
+                    "order",
+                    {},
+                ).get("own", "")
+            ),
+            "other_order": str(
+                configured_resources.get(
+                    "order",
+                    {},
+                ).get("other", "")
+            ),
+        }
+
+    else:
+        RESOURCE_IDS = {}
+
+    if not RESOURCE_IDS:
         print()
         print(
-            f"ERROR: no resource-ID configuration for target: "
-            f"{TARGET_NAME}"
+            "ERROR: no resource-ID configuration found."
         )
         return
 
@@ -3360,7 +3435,7 @@ def run_tests():
 
     print()
     print("Loading role matrix...")
-    print("=" * 60)
+    print(TERM_BLUE + TERM_BOLD + "=" * 60 + TERM_RESET)
 
     # --------------------------------------------------------
     # OPENAPI MODE
@@ -3378,9 +3453,9 @@ def run_tests():
             return
 
         print()
-        print("=" * 60)
+        print(TERM_BLUE + TERM_BOLD + "=" * 60 + TERM_RESET)
         print("OPENAPI SECURITY TEST MODE")
-        print("=" * 60)
+        print(TERM_BLUE + TERM_BOLD + "=" * 60 + TERM_RESET)
         print(f"Specification : {openapi_file}")
 
         try:
@@ -3401,7 +3476,7 @@ def run_tests():
             f"Generated OpenAPI tests: {len(tests)}"
         )
 
-        print("=" * 60)
+        print(TERM_BLUE + TERM_BOLD + "=" * 60 + TERM_RESET)
 
         for test in tests:
 
@@ -3459,9 +3534,7 @@ def run_tests():
     # LOGIN
     # --------------------------------------------------------
 
-    print()
-    print("Logging in test users...")
-    print("=" * 60)
+    terminal_banner("LOGGING IN TEST USERS")
 
     tokens = {}
 
@@ -3490,14 +3563,9 @@ def run_tests():
     # TESTS
     # --------------------------------------------------------
 
-    print()
-    print(
-        f"Running security tests against "
-        f"{TARGET_NAME}..."
+    terminal_banner(
+        f"RUNNING SECURITY TESTS AGAINST {TARGET_NAME}"
     )
-
-    print("=" * 60)
-
     passed = 0
     failed = 0
 
@@ -3530,8 +3598,10 @@ def run_tests():
             result
         )
 
+        colour = status_colour(result_text)
+
         print(
-            f"{result_text:5} | "
+            f"{colour}{ANSI_BOLD}{result_text:5}{ANSI_RESET} | "
             f"{result['id']:7} | "
             f"{result['role']:5} | "
             f"{result['method']:6} | "
@@ -3544,7 +3614,7 @@ def run_tests():
     # SUMMARY
     # --------------------------------------------------------
 
-    print("=" * 60)
+    print(TERM_BLUE + TERM_BOLD + "=" * 60 + TERM_RESET)
 
     print(
         f"Target:  {TARGET_NAME}"
@@ -3608,18 +3678,11 @@ def run_tests():
     # FINAL
     # --------------------------------------------------------
 
-    print()
-    print("=" * 60)
-    print("REPORT GENERATION COMPLETE")
-    print("=" * 60)
+    terminal_banner("REPORT GENERATION COMPLETE")
 
-    print(
-        f"Target : {TARGET_NAME}"
-    )
+    print(f"{ANSI_CYAN}Target : {TARGET_NAME}{ANSI_RESET}")
 
-    print(
-        f"URL    : {BASE_URL}"
-    )
+    print(f"{ANSI_CYAN}URL    : {BASE_URL}{ANSI_RESET}")
 
     if args.report in ("html", "all"):
         print(
@@ -3631,7 +3694,7 @@ def run_tests():
             f"PDF    : {PDF_REPORT}"
         )
 
-    print("=" * 60)
+    print(TERM_BLUE + TERM_BOLD + "=" * 60 + TERM_RESET)
 
 
 # ============================================================

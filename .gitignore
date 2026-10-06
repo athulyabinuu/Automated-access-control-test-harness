@@ -1,25 +1,45 @@
-# Python virtual environment
-venv/
-.venv/
-
-# Python cache
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
 
 # Environment / secrets
 .env
-
-# Logs
-*.log
-
-# Temporary backup files
-*.bak
-*.bak.*
+.env.*
+!.env.example
 
 # Local databases
-target3-app/instance/*.db
-lab/target3-vulnerable/instance/*.db
+*.db
+*.sqlite
+*.sqlite3
 
-# Local/generated reports
-# Keep reports that are intentionally committed for review
-harness/reports/*.html
+# Backup files
+*.bak
+*.bak*
+*.backup
+target2-app-backup/
+
+# Generated reports
+reports/*
+!reports/
+!reports/Target_1_access_control_report.html
+!reports/Target_1_access_control_report.json
+!reports/Target_1_access_control_report.pdf
+!reports/SECUREHUB_access_control_report.html
+!reports/SECUREHUB_access_control_report.json
+!reports/SECUREHUB_access_control_report.pdf
+
+# Local logs
+*.log
+
+# OS / editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Development backup files
+*.before-*

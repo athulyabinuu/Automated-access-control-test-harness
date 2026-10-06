@@ -1,0 +1,32 @@
+roles:
+  user:
+    GET /dashboard:
+      access: allow
+
+    GET /profile:
+      access: allow
+
+    GET /orders:
+      access: allow
+
+    GET /admin/users:
+      access: deny
+
+    GET /admin/stats:
+      access: deny
+
+  admin:
+    GET /dashboard:
+      access: allow
+
+    GET /profile:
+      access: allow
+
+    GET /orders:
+      access: allow
+
+    GET /admin/users:
+      access: allow
+
+    GET /admin/stats:
+      access: allow
