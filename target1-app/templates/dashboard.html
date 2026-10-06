@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Dashboard | SecureLab</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Topbar Navigation -->
+    <header class="topbar">
+        <a href="/dashboard" class="topbar-brand">
+            <div class="brand-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+            </div>
+            <div>
+                <span>SecureLab</span>
+                <span class="brand-subtitle">Access Control Platform</span>
+            </div>
+        </a>
+
+        <nav class="topbar-nav">
+            <a href="/dashboard" class="nav-item active">Dashboard</a>
+            <a href="/products" class="nav-item">Products</a>
+            <a href="/profile" class="nav-item">Profile</a>
+            <a href="/orders" class="nav-item">Orders</a>
+            <a href="/users" class="nav-item admin-nav-item" style="display: none;">Users</a>
+            <a href="/admin" class="nav-item admin-nav-item" style="display: none;">Admin Console</a>
+        </nav>
+
+        <div class="topbar-right">
+            <div id="user-pill" class="user-badge-pill" style="display: none;">
+                <div id="pill-avatar" class="user-avatar-mini">U</div>
+                <div class="user-pill-info">
+                    <span id="pill-username" class="user-pill-name">Loading...</span>
+                    <span id="pill-role" class="user-pill-role">ROLE</span>
+                </div>
+            </div>
+            <button id="logout-btn" class="btn btn-secondary btn-sm" style="display: none;">
+                Sign Out
+            </button>
+            <a href="/login" id="topbar-login-link" class="btn btn-primary btn-sm" style="display: none;">Sign In</a>
+        </div>
+    </header>
+
+    <!-- App Layout Container -->
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="app-sidebar">
+            <div>
+                <div class="sidebar-section-title">Navigation</div>
+                <ul class="sidebar-menu">
+                    <li>
+                        <a href="/dashboard" class="sidebar-link active">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="14" width="7" height="7"></rect>
+                                <rect x="3" y="14" width="7" height="7"></rect>
+                            </svg>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/products" class="sidebar-link">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <path d="M16 10a4 4 0 0 1-8 0"></path>
+                            </svg>
+                            Products Catalog
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/profile" class="sidebar-link">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            My Profile
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/orders" class="sidebar-link">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="9" cy="21" r="1"></circle>
+                                <circle cx="20" cy="21" r="1"></circle>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                            </svg>
+                            My Orders
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <div class="sidebar-section-title">Security & Governance</div>
+                <ul class="sidebar-menu">
+                    <li>
+                        <a href="/users" class="sidebar-link">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                            User Directory
+                            <span class="admin-badge-indicator">RBAC</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin" class="sidebar-link admin-nav-item" style="display: none;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.93V17a1 1 0 0 1-2 0v-.07A7.003 7.003 0 0 1 5.07 11H5a1 1 0 0 1 0-2h.07A7.003 7.003 0 0 1 11 5.07V5a1 1 0 0 1 2 0v.07A7.003 7.003 0 0 1 18.93 11H19a1 1 0 0 1 0 2h-.07A7.003 7.003 0 0 1 13 16.93z"></path>
+                            </svg>
+                            Admin Console
+                            <span class="admin-badge-indicator">Privileged</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="app-main">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="page-title-group">
+                    <h1>
+                        Welcome back, <span id="dash-welcome-user" style="color: var(--color-cyan);">Authenticated User</span>
+                        <span id="dash-role-badge" class="badge badge-user">USER</span>
+                    </h1>
+                    <p>Monitor your active authorization session, view accessible resources, and inspect security boundaries.</p>
+                </div>
+                <div>
+                    <span class="page-tagline-badge">
+                        <span class="pulse-dot"></span>
+                        Authorization Enforced: 100% Policy Pass
+                    </span>
+                </div>
+            </div>
+
+            <!-- Quick Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card emerald">
+                    <div class="stat-header">
+                        <span class="stat-label">Security Status</span>
+                        <div class="stat-icon" style="color: var(--color-emerald);">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-value" style="color: var(--color-emerald);">Protected</div>
+                    <div class="stat-detail">JWT Signature &amp; Decorator Active</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Account Status</span>
+                        <div class="stat-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 14 14"></polyline>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-value">Active</div>
+                    <div class="stat-detail">User ID: <strong id="dash-user-id" class="mono" style="color: #f1f5f9;">#</strong></div>
+                </div>
+
+                <div class="stat-card rose">
+                    <div class="stat-header">
+                        <span class="stat-label">Assigned Role</span>
+                        <div class="stat-icon" style="color: var(--color-rose);">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                        </div>
+                    </div>
+                    <div id="dash-role-name" class="stat-value mono" style="font-size: 1.5rem;">USER</div>
+                    <div class="stat-detail">Vertical Privilege Level</div>
+                </div>
+
+                <div class="stat-card amber">
+                    <div class="stat-header">
+                        <span class="stat-label">Authorized Order</span>
+                        <div class="stat-icon" style="color: var(--color-amber);">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="9" cy="21" r="1"></circle>
+                                <circle cx="20" cy="21" r="1"></circle>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div id="dash-assigned-order" class="stat-value mono">101</div>
+                    <div class="stat-detail">Horizontal Ownership Target</div>
+                </div>
+            </div>
+
+            <!-- Two-Column Layout -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                <!-- Decoded Token Claims Inspector -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--color-cyan);">
+                                <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path>
+                            </svg>
+                            Active JWT Authentication Claims
+                        </div>
+                        <span class="badge badge-cyan mono">GET /api/me</span>
+                    </div>
+                    <div class="panel-body">
+                        <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                            Token decoded by backend <code style="color: var(--color-cyan);">@token_required</code> decorator and verified with HS256:
+                        </p>
+                        <div class="evidence-box">
+                            <pre id="dash-token-claims">Loading token claims...</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Available Features & Quick Actions -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--color-blue);">
+                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                            </svg>
+                            Access-Control Testing Shortcuts
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div style="display: flex; flex-direction: column; gap: 0.875rem;">
+                            <a href="/profile" class="btn btn-secondary" style="justify-content: flex-start;">
+                                👤 <strong>My Profile &amp; IDOR Probing:</strong> Verify ownership of profile ID
+                            </a>
+                            <a href="/orders" class="btn btn-secondary" style="justify-content: flex-start;">
+                                📦 <strong>My Orders:</strong> Test horizontal boundary against other order IDs
+                            </a>
+                            <a href="/users" class="btn btn-secondary" style="justify-content: flex-start;">
+                                👥 <strong>User Directory:</strong> Test vertical boundary against /api/admin/users
+                            </a>
+                            <a href="/products" class="btn btn-secondary" style="justify-content: flex-start;">
+                                🛒 <strong>Product Catalog:</strong> Inspect publicly accessible inventory API
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Public Products Catalog Preview -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--color-cyan);">
+                            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                        </svg>
+                        Product Inventory (Public API Preview)
+                    </div>
+                    <a href="/products" class="btn btn-secondary btn-sm">Full Catalog →</a>
+                </div>
+                <div class="panel-body" style="padding: 0;">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Item ID</th>
+                                    <th>Product Name</th>
+                                    <th>Inventory Status</th>
+                                    <th>Endpoint Access</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dash-products-preview">
+                                <tr>
+                                    <td colspan="4" style="text-align: center; color: var(--text-muted);">Loading products...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            SecureLab.initDashboardPage();
+        });
+    </script>
+</body>
+</html>

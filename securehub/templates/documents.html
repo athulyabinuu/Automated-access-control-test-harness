@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Protected Documents{% endblock %}
+{% block header_title %}Protected Documents Repository{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+  <div>
+    <h2 style="font-size: 1.25rem; font-weight: 700;">Security Documentation & Specs</h2>
+    <p style="font-size: 0.85rem; color: var(--text-muted);">
+      {% if current_user.role in ['Manager', 'Admin'] %}
+        Managerial View: All enterprise documents accessible.
+      {% else %}
+        User View: Displaying confidential documents owned by your account.
+      {% endif %}
+    </p>
+  </div>
+  <button onclick="document.getElementById('create-doc-card').style.display = 'block'" class="btn btn-primary">
+    + Create Document
+  </button>
+</div>
+
+<div id="create-doc-card" class="card" style="display: none; margin-bottom: 32px; border: 2px solid var(--primary);">
+  <div class="card-header" style="background-color: #eff6ff;">
+    <h3 class="card-title" style="color: var(--primary);">Create New Confidential Document</h3>
+    <button onclick="document.getElementById('create-doc-card').style.display = 'none'" class="btn btn-secondary btn-sm">Cancel</button>
+  </div>
+  <div class="card-body">
+    <form method="POST" action="{{ url_for('documents.create_document') }}">
+      <div class="form-group">
+        <label for="title" class="form-label">Document Title</label>
+        <input type="text" id="title" name="title" class="form-control" placeholder="e.g. Incident Report #402" required>
+      </div>
+      <div class="form-group">
+        <label for="description" class="form-label">Summary / Description</label>
+        <input type="text" id="description" name="description" class="form-control" placeholder="Brief executive overview">
+      </div>
+      <div class="form-group">
+        <label for="content" class="form-label">Document Content / Classification</label>
+        <textarea id="content" name="content" class="form-control" style="min-height: 140px;" placeholder="Full document text body..." required></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Save Document</button>
+    </form>
+  </div>
+</div>
+
+{% if active_doc %}
+<div class="card" style="border: 2px solid var(--primary); margin-bottom: 32px;">
+  <div class="card-header" style="background-color: #eff6ff;">
+    <div>
+      <span class="badge badge-info" style="margin-bottom: 6px;">Active View</span>
+      <h3 class="card-title" style="color: var(--primary); font-size: 1.2rem;">{{ active_doc.title }}</h3>
+    </div>
+    <a href="{{ url_for('documents.index') }}" class="btn btn-secondary btn-sm">Close View</a>
+  </div>
+  <div class="card-body">
+    <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color);">
+      Owner: <strong>{{ active_doc.owner.username }}</strong> | Created: <strong>{{ active_doc.created_at.strftime('%Y-%m-%d %H:%M UTC') }}</strong>
+    </div>
+    <div style="background-color: #f8fafc; border: 1px solid var(--border-color); border-radius: 6px; padding: 20px; font-family: monospace; white-space: pre-wrap; font-size: 0.9rem;">{{ active_doc.content }}</div>
+  </div>
+</div>
+{% endif %}
+
+<div class="card">
+  <div class="card-body" style="padding: 0;">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Owner</th>
+            <th>Description</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for doc in documents %}
+          <tr>
+            <td><strong>#{{ doc.id }}</strong></td>
+            <td><strong>{{ doc.title }}</strong></td>
+            <td>
+              <span>{{ doc.owner.username }}</span>
+              {% if doc.owner_id == current_user.id %}
+                <span class="badge badge-info" style="font-size: 0.65rem; margin-left: 4px;">Owner</span>
+              {% endif %}
+            </td>
+            <td>{{ doc.description or 'No summary' }}</td>
+            <td>{{ doc.created_at.strftime('%Y-%m-%d') if doc.created_at else 'N/A' }}</td>
+            <td>
+              <a href="{{ url_for('documents.view_document', doc_id=doc.id) }}" class="btn btn-secondary btn-sm">
+                View Content
+              </a>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 24px;">
+              No documents available under your permissions.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>403 Access Denied - SECUREHUB</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="login-body">
+  <div class="login-card" style="max-width: 520px; text-align: center;">
+    <div class="error-code">403</div>
+    <h1 class="error-title">Access Denied</h1>
+    <p class="error-desc">
+      Your account role or authorization scope does not permit access to the requested resource. If you require access, please contact a system administrator.
+    </p>
+    <div style="display: flex; gap: 12px; justify-content: center;">
+      <a href="{{ url_for('dashboard.index') }}" class="btn btn-primary">Return to Dashboard</a>
+      <a href="{{ url_for('profile.index') }}" class="btn btn-secondary">View Profile</a>
+    </div>
+  </div>
+</body>
+</html>

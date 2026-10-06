@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Dashboard{% endblock %} - SECUREHUB</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div>
+        <div class="sidebar-header">
+          <a href="{{ url_for('dashboard.index') }}" class="brand-logo">
+            <div class="brand-icon">S</div>
+            <div>
+              <div class="brand-title">SECUREHUB</div>
+              <div class="brand-subtitle">Enterprise Security</div>
+            </div>
+          </a>
+        </div>
+
+        <nav class="sidebar-nav">
+          <div class="nav-section-title">Main Navigation</div>
+          <a href="{{ url_for('dashboard.index') }}" class="nav-item {% if request.endpoint == 'dashboard.index' %}active{% endif %}">
+            <span class="nav-icon">📊</span>
+            <span>Dashboard</span>
+          </a>
+          <a href="{{ url_for('profile.index') }}" class="nav-item {% if request.endpoint == 'profile.index' %}active{% endif %}">
+            <span class="nav-icon">👤</span>
+            <span>Profile</span>
+          </a>
+          <a href="{{ url_for('users.index') }}" class="nav-item {% if request.endpoint == 'users.index' %}active{% endif %}">
+            <span class="nav-icon">👥</span>
+            <span>Users</span>
+          </a>
+          <a href="{{ url_for('departments.index') }}" class="nav-item {% if request.endpoint == 'departments.index' %}active{% endif %}">
+            <span class="nav-icon">🏢</span>
+            <span>Departments</span>
+          </a>
+          <a href="{{ url_for('orders.index') }}" class="nav-item {% if request.endpoint == 'orders.index' %}active{% endif %}">
+            <span class="nav-icon">📦</span>
+            <span>Orders</span>
+          </a>
+          <a href="{{ url_for('documents.index') }}" class="nav-item {% if request.endpoint == 'documents.index' %}active{% endif %}">
+            <span class="nav-icon">📄</span>
+            <span>Documents</span>
+          </a>
+          <a href="{{ url_for('tickets.index') }}" class="nav-item {% if request.endpoint == 'tickets.index' %}active{% endif %}">
+            <span class="nav-icon">🎫</span>
+            <span>Tickets</span>
+          </a>
+          <a href="{{ url_for('reports.index') }}" class="nav-item {% if request.endpoint == 'reports.index' %}active{% endif %}">
+            <span class="nav-icon">📈</span>
+            <span>Reports</span>
+          </a>
+          <a href="{{ url_for('notifications.index') }}" class="nav-item {% if request.endpoint == 'notifications.index' %}active{% endif %}">
+            <span class="nav-icon">🔔</span>
+            <span>Notifications</span>
+          </a>
+          <a href="{{ url_for('settings.index') }}" class="nav-item {% if request.endpoint == 'settings.index' %}active{% endif %}">
+            <span class="nav-icon">⚙️</span>
+            <span>Settings</span>
+          </a>
+
+          {% if current_user.is_admin %}
+          <div class="nav-section-title">Administration</div>
+          <a href="{{ url_for('admin.index') }}" class="nav-item {% if request.endpoint == 'admin.index' %}active{% endif %}">
+            <span class="nav-icon">🛡️</span>
+            <span>Admin</span>
+          </a>
+          {% endif %}
+        </nav>
+      </div>
+
+      <div class="sidebar-footer">
+        <button type="button" id="logout-button" class="logout-button">
+          <span class="logout-icon">↪</span>
+          <span>Sign Out</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+      <!-- Topbar -->
+      <header class="topbar">
+        <h1 class="page-header-title">{% block header_title %}Dashboard{% endblock %}</h1>
+
+        <div class="topbar-right">
+          <div class="user-profile-badge">
+            <div class="avatar">{{ current_user.username[0].upper() }}</div>
+            <div class="user-info">
+              <span class="user-name">{{ current_user.username }}</span>
+              <span class="role-badge {{ current_user.role.lower() }}">{{ current_user.role }}</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content Body -->
+      <main class="content-body">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }}">
+                <span>{{ message }}</span>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

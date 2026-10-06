@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 Page Not Found - SECUREHUB</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="login-body">
+  <div class="login-card" style="max-width: 520px; text-align: center;">
+    <div class="error-code" style="color: #64748b;">404</div>
+    <h1 class="error-title">Page Not Found</h1>
+    <p class="error-desc">
+      The requested endpoint or resource could not be found on this server.
+    </p>
+    <div>
+      <a href="{{ url_for('dashboard.index') }}" class="btn btn-primary">Return to Dashboard</a>
+    </div>
+  </div>
+</body>
+</html>

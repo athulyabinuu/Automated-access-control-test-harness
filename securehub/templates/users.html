@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Users Management{% endblock %}
+{% block header_title %}Users Directory{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+  <div>
+    <h2 style="font-size: 1.25rem; font-weight: 700;">Enterprise User Accounts</h2>
+    <p style="font-size: 0.85rem; color: var(--text-muted);">Manage authorization roles and user access settings across departments.</p>
+  </div>
+  {% if current_user.is_admin %}
+  <button onclick="document.getElementById('create-user-card').style.display = 'block'" class="btn btn-primary">
+    + Add New User
+  </button>
+  {% endif %}
+</div>
+
+{% if current_user.is_admin %}
+<div id="create-user-card" class="card" style="display: none; margin-bottom: 32px; border: 2px solid var(--primary);">
+  <div class="card-header" style="background-color: #eff6ff;">
+    <h3 class="card-title" style="color: var(--primary);">Create New System User</h3>
+    <button onclick="document.getElementById('create-user-card').style.display = 'none'" class="btn btn-secondary btn-sm">Cancel</button>
+  </div>
+  <div class="card-body">
+    <form method="POST" action="{{ url_for('users.create_user') }}">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="form-group">
+          <label for="username" class="form-label">Username</label>
+          <input type="text" id="username" name="username" class="form-control" placeholder="e.g. david" required>
+        </div>
+        <div class="form-group">
+          <label for="email" class="form-label">Email Address</label>
+          <input type="email" id="email" name="email" class="form-control" placeholder="e.g. david@securehub.internal" required>
+        </div>
+        <div class="form-group">
+          <label for="password" class="form-label">Initial Password</label>
+          <input type="password" id="password" name="password" class="form-control" placeholder="Minimum 6 characters" required>
+        </div>
+        <div class="form-group">
+          <label for="role" class="form-label">Assign Role</label>
+          <select id="role" name="role" class="form-control" required>
+            <option value="User">User</option>
+            <option value="Manager">Manager</option>
+            <option value="Admin">Admin</option>
+          </select>
+        </div>
+        <div class="form-group" style="grid-column: span 2;">
+          <label for="department_id" class="form-label">Department</label>
+          <select id="department_id" name="department_id" class="form-control">
+            <option value="">None (Unassigned)</option>
+            {% for dept in departments %}
+              <option value="{{ dept.id }}">{{ dept.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Create User Account</button>
+    </form>
+  </div>
+</div>
+{% endif %}
+
+<div class="card">
+  <div class="card-body" style="padding: 0;">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Department</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+          <tr>
+            <td><strong>#{{ user.id }}</strong></td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div class="avatar" style="width: 32px; height: 32px; font-size: 0.85rem;">{{ user.username[0].upper() }}</div>
+                <span>{{ user.username }}</span>
+              </div>
+            </td>
+            <td>{{ user.email }}</td>
+            <td><span class="role-badge {{ user.role.lower() }}">{{ user.role }}</span></td>
+            <td>{{ user.department.name if user.department else 'N/A' }}</td>
+            <td>{{ user.created_at.strftime('%Y-%m-%d') if user.created_at else 'N/A' }}</td>
+            <td>
+              {% if current_user.is_admin %}
+                <div style="display: flex; gap: 8px;">
+                  <form method="POST" action="{{ url_for('users.update_role', user_id=user.id) }}" style="display: inline-flex; gap: 4px;">
+                    <select name="role" onchange="this.form.submit()" class="form-control" style="padding: 4px 8px; font-size: 0.8rem; width: auto;">
+                      <option value="User" {% if user.role == 'User' %}selected{% endif %}>User</option>
+                      <option value="Manager" {% if user.role == 'Manager' %}selected{% endif %}>Manager</option>
+                      <option value="Admin" {% if user.role == 'Admin' %}selected{% endif %}>Admin</option>
+                    </select>
+                  </form>
+                  {% if user.id != current_user.id %}
+                  <form method="POST" action="{{ url_for('users.delete_user', user_id=user.id) }}" onsubmit="return confirm('Are you sure you want to delete user {{ user.username }}?');">
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                  </form>
+                  {% endif %}
+                </div>
+              {% else %}
+                <span style="color: var(--text-muted); font-size: 0.8rem;">Read-only</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

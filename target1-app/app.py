@@ -1,6 +1,7 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template, redirect
 import jwt
 from functools import wraps
+import os
 
 app = Flask(__name__)
 
@@ -15,21 +16,21 @@ users = {
     "admin": {
         "id": 1,
         "username": "admin",
-        "password": "admin123",
+        "password": os.getenv("TARGET1_ADMIN_PASSWORD", "admin123"),
         "role": "admin"
     },
 
     "user1": {
         "id": 2,
         "username": "user1",
-        "password": "user123",
+        "password": os.getenv("TARGET1_USER1_PASSWORD", "user123"),
         "role": "user"
     },
 
     "user2": {
         "id": 3,
         "username": "user2",
-        "password": "user123",
+        "password": os.getenv("TARGET1_USER2_PASSWORD", "user456"),
         "role": "user"
     }
 }
@@ -41,6 +42,9 @@ users = {
 
 @app.route("/", methods=["GET"])
 def home():
+    if "text/html" in request.headers.get("Accept", "") and "python-requests" not in request.headers.get("User-Agent", ""):
+        return redirect("/login")
+
     return jsonify({
         "message": "Access Control Test Harness - Target API",
         "status": "running"
@@ -400,6 +404,45 @@ def admin_stats():
         "total_orders": len(orders),
         "total_products": 3
     }), 200
+
+
+# ============================================================
+# FRONTEND WEB ROUTES (SecureLab Platform)
+# ============================================================
+
+@app.route("/login", methods=["GET"])
+def web_login():
+    return render_template("login.html")
+
+
+@app.route("/dashboard", methods=["GET"])
+def web_dashboard():
+    return render_template("dashboard.html")
+
+
+@app.route("/products", methods=["GET"])
+def web_products():
+    return render_template("products.html")
+
+
+@app.route("/profile", methods=["GET"])
+def web_profile():
+    return render_template("profile.html")
+
+
+@app.route("/orders", methods=["GET"])
+def web_orders():
+    return render_template("orders.html")
+
+
+@app.route("/users", methods=["GET"])
+def web_users():
+    return render_template("users.html")
+
+
+@app.route("/admin", methods=["GET"])
+def web_admin():
+    return render_template("admin.html")
 
 
 # ============================================================

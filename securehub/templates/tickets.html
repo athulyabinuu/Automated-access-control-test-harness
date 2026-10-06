@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Support & Security Tickets{% endblock %}
+{% block header_title %}Security Support Tickets{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+  <div>
+    <h2 style="font-size: 1.25rem; font-weight: 700;">Support Requests & Incident Tickets</h2>
+    <p style="font-size: 0.85rem; color: var(--text-muted);">Track and manage operational tickets and infrastructure requests.</p>
+  </div>
+  <button onclick="document.getElementById('create-ticket-card').style.display = 'block'" class="btn btn-primary">
+    + Create Ticket
+  </button>
+</div>
+
+<div id="create-ticket-card" class="card" style="display: none; margin-bottom: 32px; border: 2px solid var(--primary);">
+  <div class="card-header" style="background-color: #eff6ff;">
+    <h3 class="card-title" style="color: var(--primary);">Submit Support Ticket</h3>
+    <button onclick="document.getElementById('create-ticket-card').style.display = 'none'" class="btn btn-secondary btn-sm">Cancel</button>
+  </div>
+  <div class="card-body">
+    <form method="POST" action="{{ url_for('tickets.create_ticket') }}">
+      <div class="form-group">
+        <label for="title" class="form-label">Ticket Title</label>
+        <input type="text" id="title" name="title" class="form-control" placeholder="Brief summary of request/issue" required>
+      </div>
+      <div class="form-group">
+        <label for="description" class="form-label">Detailed Description</label>
+        <textarea id="description" name="description" class="form-control" placeholder="Provide relevant details..." required></textarea>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="form-group">
+          <label for="priority" class="form-label">Priority Level</label>
+          <select id="priority" name="priority" class="form-control">
+            <option value="Low">Low</option>
+            <option value="Medium" selected>Medium</option>
+            <option value="High">High</option>
+            <option value="Critical">Critical</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="assigned_to" class="form-label">Assign To Specialist (Optional)</label>
+          <select id="assigned_to" name="assigned_to" class="form-control">
+            <option value="">Unassigned</option>
+            {% for u in assignable_users %}
+              <option value="{{ u.id }}">{{ u.username }} ({{ u.role }})</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit Ticket</button>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body" style="padding: 0;">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Creator</th>
+            <th>Assigned To</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th>Update Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for ticket in tickets %}
+          <tr>
+            <td><strong>#{{ ticket.id }}</strong></td>
+            <td><strong>{{ ticket.title }}</strong></td>
+            <td>{{ ticket.creator.username }}</td>
+            <td>{{ ticket.assignee.username if ticket.assignee else 'Unassigned' }}</td>
+            <td>
+              <span class="badge {% if ticket.priority == 'Critical' %}badge-danger{% elif ticket.priority == 'High' %}badge-warning{% elif ticket.priority == 'Medium' %}badge-info{% else %}badge-secondary{% endif %}">
+                {{ ticket.priority }}
+              </span>
+            </td>
+            <td>
+              <span class="badge {% if ticket.status == 'Resolved' or ticket.status == 'Closed' %}badge-success{% elif ticket.status == 'In Progress' %}badge-info{% else %}badge-warning{% endif %}">
+                {{ ticket.status }}
+              </span>
+            </td>
+            <td>{{ ticket.created_at.strftime('%Y-%m-%d %H:%M') if ticket.created_at else 'N/A' }}</td>
+            <td>
+              <form method="POST" action="{{ url_for('tickets.update_status', ticket_id=ticket.id) }}" style="display: inline-block;">
+                <select name="status" onchange="this.form.submit()" class="form-control" style="padding: 4px 8px; font-size: 0.8rem; width: auto;">
+                  <option value="Open" {% if ticket.status == 'Open' %}selected{% endif %}>Open</option>
+                  <option value="In Progress" {% if ticket.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                  <option value="Resolved" {% if ticket.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+                  <option value="Closed" {% if ticket.status == 'Closed' %}selected{% endif %}>Closed</option>
+                </select>
+              </form>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 24px;">
+              No ticket records found.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
