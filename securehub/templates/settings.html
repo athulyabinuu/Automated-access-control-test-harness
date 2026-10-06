@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Account Settings{% endblock %}
+{% block header_title %}Account Settings{% endblock %}
+
+{% block content %}
+<div style="max-width: 700px; margin: 0 auto;">
+  <!-- Update Account Settings -->
+  <div class="card" style="margin-bottom: 32px;">
+    <div class="card-header">
+      <h3 class="card-title">General Preferences</h3>
+    </div>
+    <div class="card-body">
+      <form method="POST" action="{{ url_for('settings.index') }}">
+        <input type="hidden" name="action" value="update_profile">
+        <div class="form-group">
+          <label for="email" class="form-label">Email Address</label>
+          <input type="email" id="email" name="email" class="form-control" value="{{ current_user.email }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Change Password -->
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Security & Password</h3>
+    </div>
+    <div class="card-body">
+      <form method="POST" action="{{ url_for('settings.index') }}">
+        <input type="hidden" name="action" value="change_password">
+        <div class="form-group">
+          <label for="current_password" class="form-label">Current Password</label>
+          <input type="password" id="current_password" name="current_password" class="form-control" placeholder="Enter current password" required>
+        </div>
+        <div class="form-group">
+          <label for="new_password" class="form-label">New Password</label>
+          <input type="password" id="new_password" name="new_password" class="form-control" placeholder="At least 6 characters" required>
+        </div>
+        <div class="form-group">
+          <label for="confirm_password" class="form-label">Confirm New Password</label>
+          <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="Re-enter new password" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Update Password</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

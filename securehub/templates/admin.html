@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Panel{% endblock %}
+{% block header_title %}System Administration{% endblock %}
+
+{% block content %}
+<div class="alert alert-warning" style="margin-bottom: 24px;">
+  <span>🛡️ <strong>RESTRICTED ACCESS ZONE:</strong> You are viewing system administrative telemetry as an Admin.</span>
+</div>
+
+<div class="dashboard-grid">
+  <div class="stat-card" style="border-left: 4px solid #ef4444;">
+    <div class="stat-info">
+      <div class="stat-value">{{ users_count }}</div>
+      <div class="stat-label">Registered Accounts</div>
+    </div>
+    <div class="stat-icon-wrapper" style="color: #ef4444; background: #fee2e2;">👥</div>
+  </div>
+
+  <div class="stat-card" style="border-left: 4px solid #3b82f6;">
+    <div class="stat-info">
+      <div class="stat-value">{{ depts_count }}</div>
+      <div class="stat-label">System Departments</div>
+    </div>
+    <div class="stat-icon-wrapper">🏢</div>
+  </div>
+
+  <div class="stat-card" style="border-left: 4px solid #10b981;">
+    <div class="stat-info">
+      <div class="stat-value">{{ orders_count }}</div>
+      <div class="stat-label">Total Procurement Orders</div>
+    </div>
+    <div class="stat-icon-wrapper" style="color: #10b981; background: #d1fae5;">📦</div>
+  </div>
+
+  <div class="stat-card" style="border-left: 4px solid #f59e0b;">
+    <div class="stat-info">
+      <div class="stat-value">{{ docs_count }}</div>
+      <div class="stat-label">Stored Documents</div>
+    </div>
+    <div class="stat-icon-wrapper" style="color: #f59e0b; background: #fef3c7;">📄</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">Security & Role Delegation Matrix</h3>
+  </div>
+  <div class="card-body" style="padding: 0;">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>User ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Department</th>
+            <th>Password Hash Hash Method</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in system_users %}
+          <tr>
+            <td><strong>#{{ u.id }}</strong></td>
+            <td>{{ u.username }}</td>
+            <td>{{ u.email }}</td>
+            <td><span class="role-badge {{ u.role.lower() }}">{{ u.role }}</span></td>
+            <td>{{ u.department.name if u.department else 'N/A' }}</td>
+            <td><code style="font-size: 0.75rem; background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">scrypt / PBKDF2 (Werkzeug Encrypted)</code></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

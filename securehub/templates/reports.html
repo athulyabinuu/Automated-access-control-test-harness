@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Audit & Security Reports{% endblock %}
+{% block header_title %}Security & Compliance Reports{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+  <div>
+    <h2 style="font-size: 1.25rem; font-weight: 700;">Audit & Compliance Reports</h2>
+    <p style="font-size: 0.85rem; color: var(--text-muted);">Vulnerability assessments, compliance certifications, and security scans.</p>
+  </div>
+  <button onclick="document.getElementById('create-report-card').style.display = 'block'" class="btn btn-primary">
+    + Generate New Report
+  </button>
+</div>
+
+<div id="create-report-card" class="card" style="display: none; margin-bottom: 32px; border: 2px solid var(--primary);">
+  <div class="card-header" style="background-color: #eff6ff;">
+    <h3 class="card-title" style="color: var(--primary);">Create Security Report</h3>
+    <button onclick="document.getElementById('create-report-card').style.display = 'none'" class="btn btn-secondary btn-sm">Cancel</button>
+  </div>
+  <div class="card-body">
+    <form method="POST" action="{{ url_for('reports.create_report') }}">
+      <div class="form-group">
+        <label for="title" class="form-label">Report Title</label>
+        <input type="text" id="title" name="title" class="form-control" placeholder="e.g. Q3 SOC 2 Compliance Audit" required>
+      </div>
+      <div class="form-group">
+        <label for="description" class="form-label">Executive Summary</label>
+        <textarea id="description" name="description" class="form-control" placeholder="Provide audit scope, findings, and metrics..." required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="status" class="form-label">Publication Status</label>
+        <select id="status" name="status" class="form-control">
+          <option value="Draft">Draft</option>
+          <option value="Published">Published</option>
+          <option value="Archived">Archived</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">Create Report Entry</button>
+    </form>
+  </div>
+</div>
+
+<div class="dashboard-grid" style="grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));">
+  {% for report in reports %}
+  <div class="card" style="margin-bottom: 0;">
+    <div class="card-header">
+      <div>
+        <span class="badge {% if report.status == 'Published' %}badge-success{% elif report.status == 'Draft' %}badge-warning{% else %}badge-secondary{% endif %}" style="margin-bottom: 4px;">
+          {{ report.status }}
+        </span>
+        <h3 class="card-title" style="font-size: 1.05rem;">{{ report.title }}</h3>
+      </div>
+    </div>
+    <div class="card-body">
+      <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px;">
+        {{ report.description }}
+      </p>
+      <div style="border-top: 1px solid var(--border-color); padding-top: 12px; font-size: 0.78rem; color: var(--text-light); display: flex; justify-content: space-between;">
+        <span>Author: <strong>{{ report.creator.username }}</strong></span>
+        <span>Date: <strong>{{ report.created_at.strftime('%Y-%m-%d') if report.created_at else 'N/A' }}</strong></span>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="card" style="grid-column: 1 / -1;">
+    <div class="card-body" style="text-align: center; color: var(--text-muted); padding: 32px;">
+      No reports available.
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

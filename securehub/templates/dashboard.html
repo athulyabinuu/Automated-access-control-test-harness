@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}Security Dashboard{% endblock %}
+{% block header_title %}Overview Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-grid">
+  <div class="stat-card">
+    <div class="stat-info">
+      <div class="stat-value">{{ total_users }}</div>
+      <div class="stat-label">Total Users</div>
+    </div>
+    <div class="stat-icon-wrapper">👥</div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-info">
+      <div class="stat-value">{{ total_departments }}</div>
+      <div class="stat-label">Departments</div>
+    </div>
+    <div class="stat-icon-wrapper">🏢</div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-info">
+      <div class="stat-value">{{ total_orders }}</div>
+      <div class="stat-label">Total Orders</div>
+    </div>
+    <div class="stat-icon-wrapper">📦</div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-info">
+      <div class="stat-value">{{ total_documents }}</div>
+      <div class="stat-label">Documents</div>
+    </div>
+    <div class="stat-icon-wrapper">📄</div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-info">
+      <div class="stat-value">{{ open_tickets }}</div>
+      <div class="stat-label">Open Tickets</div>
+    </div>
+    <div class="stat-icon-wrapper">🎫</div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-info">
+      <div class="stat-value">{{ total_reports }}</div>
+      <div class="stat-label">Security Reports</div>
+    </div>
+    <div class="stat-icon-wrapper">📈</div>
+  </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+  <!-- Recent Orders -->
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Recent Procurement Orders</h3>
+      <a href="{{ url_for('orders.index') }}" class="btn btn-secondary btn-sm">View All</a>
+    </div>
+    <div class="card-body" style="padding: 0;">
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Order #</th>
+              <th>Requester</th>
+              <th>Description</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for order in recent_orders %}
+            <tr>
+              <td><strong>{{ order.order_number }}</strong></td>
+              <td>{{ order.user.username }}</td>
+              <td>{{ order.description }}</td>
+              <td>
+                <span class="badge {% if order.status == 'Completed' %}badge-success{% elif order.status == 'Approved' %}badge-info{% elif order.status == 'Pending' %}badge-warning{% else %}badge-secondary{% endif %}">
+                  {{ order.status }}
+                </span>
+              </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">No recent orders found.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notifications & Active Context -->
+  <div>
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Your Access Role</h3>
+      </div>
+      <div class="card-body">
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
+          <div class="avatar" style="width: 48px; height: 48px; font-size: 1.3rem;">{{ current_user.username[0].upper() }}</div>
+          <div>
+            <h4 style="margin-bottom: 2px;">{{ current_user.username }}</h4>
+            <span class="role-badge {{ current_user.role.lower() }}">{{ current_user.role }}</span>
+          </div>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">
+          Department: <strong>{{ current_user.department.name if current_user.department else 'Unassigned' }}</strong><br>
+          Session Status: <span style="color: var(--success); font-weight: 600;">Active & Authenticated</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Recent Notifications</h3>
+        <a href="{{ url_for('notifications.index') }}" class="btn btn-secondary btn-sm">All</a>
+      </div>
+      <div class="card-body">
+        {% for notif in user_notifications %}
+        <div style="padding: 10px 0; border-bottom: 1px solid var(--border-color); font-size: 0.85rem;">
+          <div style="color: var(--text-main); font-weight: {% if not notif.is_read %}600{% else %}400{% endif %};">
+            {{ notif.message }}
+          </div>
+          <div style="font-size: 0.72rem; color: var(--text-light); margin-top: 4px;">
+            {{ notif.created_at.strftime('%b %d, %H:%M') }}
+          </div>
+        </div>
+        {% else %}
+        <p style="font-size: 0.85rem; color: var(--text-muted); text-align: center;">No notifications.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

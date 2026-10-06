@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Orders & Procurement{% endblock %}
+{% block header_title %}Orders & Procurement{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+  <div>
+    <h2 style="font-size: 1.25rem; font-weight: 700;">Hardware & License Orders</h2>
+    <p style="font-size: 0.85rem; color: var(--text-muted);">
+      {% if current_user.role in ['Manager', 'Admin'] %}
+        Viewing all department orders across the enterprise.
+      {% else %}
+        Viewing orders assigned to your account or department.
+      {% endif %}
+    </p>
+  </div>
+  <button onclick="document.getElementById('create-order-card').style.display = 'block'" class="btn btn-primary">
+    + Create New Order
+  </button>
+</div>
+
+<div id="create-order-card" class="card" style="display: none; margin-bottom: 32px; border: 2px solid var(--primary);">
+  <div class="card-header" style="background-color: #eff6ff;">
+    <h3 class="card-title" style="color: var(--primary);">Submit Procurement Order</h3>
+    <button onclick="document.getElementById('create-order-card').style.display = 'none'" class="btn btn-secondary btn-sm">Cancel</button>
+  </div>
+  <div class="card-body">
+    <form method="POST" action="{{ url_for('orders.create_order') }}">
+      <div class="form-group">
+        <label for="description" class="form-label">Order Item / Description</label>
+        <textarea id="description" name="description" class="form-control" placeholder="Specify items, licenses, or hardware required..." required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="department_id" class="form-label">Target Department</label>
+        <select id="department_id" name="department_id" class="form-control">
+          {% for dept in departments %}
+            <option value="{{ dept.id }}" {% if current_user.department_id == dept.id %}selected{% endif %}>{{ dept.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit Order</button>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body" style="padding: 0;">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Order #</th>
+            <th>Requester</th>
+            <th>Department</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Date Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in orders %}
+          <tr>
+            <td><strong>{{ order.order_number }}</strong></td>
+            <td>
+              <span style="font-weight: 600;">{{ order.user.username }}</span>
+              {% if order.user_id == current_user.id %}
+                <span style="font-size: 0.7rem; background-color: #e2e8f0; padding: 2px 6px; border-radius: 4px; margin-left: 4px;">(You)</span>
+              {% endif %}
+            </td>
+            <td>{{ order.department.name if order.department else 'N/A' }}</td>
+            <td>{{ order.description }}</td>
+            <td>
+              <span class="badge {% if order.status == 'Completed' %}badge-success{% elif order.status == 'Approved' %}badge-info{% elif order.status == 'Pending' %}badge-warning{% else %}badge-secondary{% endif %}">
+                {{ order.status }}
+              </span>
+            </td>
+            <td>{{ order.created_at.strftime('%Y-%m-%d %H:%M') if order.created_at else 'N/A' }}</td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 24px;">
+              No accessible order records found.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

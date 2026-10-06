@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In - SECUREHUB Enterprise Portal</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="login-body">
+  <div class="login-card" style="max-width: 480px;">
+    <div class="login-header">
+      <div class="login-logo">S</div>
+      <h1 class="login-title">SECUREHUB</h1>
+      <p class="login-subtitle">Enterprise Security Portal</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}" style="margin-bottom: 20px;">
+            <span>{{ message }}</span>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    {% if error %}
+      <div class="alert alert-danger" style="margin-bottom: 20px;">
+        <span>{{ error }}</span>
+      </div>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('auth.login') }}">
+      <div class="form-group">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" id="username" name="username" class="form-control" placeholder="Enter your username" required autofocus>
+      </div>
+
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 12px; margin-top: 10px;">
+        Sign In to Portal
+      </button>
+    </form>
+
+    <div class="demo-credentials-box" style="max-height: 200px; overflow-y: auto;">
+      <strong>Demo Test Credentials (10 Accounts):</strong>
+      <ul style="margin-top: 6px; padding-left: 18px; line-height: 1.5; font-size: 0.76rem;">
+        <li>Alice (User, IT): <code>alice</code> / <code>alice123</code></li>
+        <li>Bob (Manager, Finance): <code>bob</code> / <code>bob123</code></li>
+        <li>Admin (Admin, IT): <code>admin</code> / <code>admin123</code></li>
+        <li>Charlie (User, HR): <code>charlie</code> / <code>charlie123</code></li>
+        <li>David (User, Sales): <code>david</code> / <code>david123</code></li>
+        <li>Emma (Manager, HR): <code>emma</code> / <code>emma123</code></li>
+        <li>Frank (User, Finance): <code>frank</code> / <code>frank123</code></li>
+        <li>Grace (User, Sales): <code>grace</code> / <code>grace123</code></li>
+        <li>Henry (Manager, IT): <code>henry</code> / <code>henry123</code></li>
+        <li>Isla (User, Operations): <code>isla</code> / <code>isla123</code></li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>
