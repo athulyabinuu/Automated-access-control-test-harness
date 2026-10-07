@@ -1524,3 +1524,12 @@ Never use this framework to access, modify, or delete data belonging to another 
 This project is developed for educational and authorized security-testing purposes.
 
 Use responsibly and only within permitted environments.
+
+---
+
+## Contributors
+
+- Athulya Binu
+- Adithya A S
+- Jyothykrishna C V
+- Abishiha
