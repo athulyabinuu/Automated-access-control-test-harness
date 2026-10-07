@@ -1,4 +1,4 @@
-# Access-Control Test Harness
+# Automated Access-Control Test Harness
 
 A Python-based security testing framework for automated authentication and authorization testing of web applications and APIs.
 
