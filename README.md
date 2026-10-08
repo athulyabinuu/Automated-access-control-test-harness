@@ -2,11 +2,11 @@
 
 A Python-based security testing framework for automated authentication and authorization testing of web applications and APIs.
 
-The Access-Control Test Harness is designed to identify access-control weaknesses by testing different users, roles, resources, and authorization boundaries.
+The **Automated Access-Control Test Harness** is designed to identify access-control weaknesses by testing different users, roles, resources, ownership boundaries, and authorization rules.
 
-The project supports API and web authorization testing and generates HTML, PDF, and JSON security reports.
+The framework supports API and web authorization testing and generates **HTML, PDF, and JSON security reports**.
 
-The repository also includes controlled target applications for reproducible security testing and demonstration.
+The repository also includes controlled target applications and approved vulnerable applications for reproducible security testing and demonstration.
 
 ---
 
@@ -16,50 +16,55 @@ Access-control vulnerabilities occur when an application does not correctly rest
 
 Examples include:
 
-- Horizontal privilege escalation
-- Vertical privilege escalation
-- IDOR-style access-control weaknesses
-- Missing authentication checks
-- Invalid-token handling problems
-- Incorrect role-based authorization
-- Unauthorized resource modification
-- Unauthorized resource deletion
+* Horizontal privilege escalation
+* Vertical privilege escalation
+* IDOR/BOLA vulnerabilities
+* Missing authentication checks
+* Invalid-token handling problems
+* Incorrect role-based authorization
+* Unauthorized resource modification
+* Unauthorized resource deletion
 
-The Access-Control Test Harness automates these checks against controlled applications.
+The Access-Control Test Harness automates these checks against controlled or authorized applications.
 
 The framework separates:
 
-1. Discovery
+1. API and endpoint discovery
 2. Authentication
 3. Resource discovery
-4. Authorization policy
-5. Test generation
-6. Test execution
-7. Finding generation
-8. Report generation
+4. Ownership evidence discovery
+5. Authorization policy
+6. Test generation
+7. Test execution
+8. Finding classification
+9. Report generation
 
-This allows the same testing engine to work with different target applications.
+This separation allows the testing engine to work with different target applications.
 
 ---
 
 ## 2. Project Objectives
 
-The main objectives of the project are:
+The main objectives are:
 
-- Automate authentication testing.
-- Automate authorization testing.
-- Discover API endpoints automatically.
-- Support OpenAPI-based testing.
-- Support passive HTML and JavaScript route discovery.
-- Discover application resources and resource IDs.
-- Test horizontal authorization boundaries.
-- Test vertical authorization boundaries.
-- Test anonymous and invalid-token access.
-- Test role-based access control.
-- Safely handle destructive operations.
-- Generate detailed security reports.
-- Provide reproducible results using controlled target applications.
-- Keep the testing engine independent from a specific target application.
+* Automate authentication testing.
+* Automate authorization testing.
+* Discover API endpoints automatically.
+* Support OpenAPI-based testing.
+* Support passive HTML and JavaScript route discovery.
+* Discover application resources and resource IDs.
+* Test horizontal authorization boundaries.
+* Test vertical authorization boundaries.
+* Test anonymous and invalid-token access.
+* Test role-based access control.
+* Test resource ownership boundaries.
+* Detect BOLA/IDOR-style access-control weaknesses.
+* Use JWT claims as independent ownership evidence when available.
+* Reduce false positives during ownership testing.
+* Safely handle destructive operations.
+* Generate HTML, PDF, and JSON security reports.
+* Provide reproducible results.
+* Keep the testing engine independent from a specific target application.
 
 ---
 
@@ -69,170 +74,246 @@ The main objectives of the project are:
 
 The harness can discover API routes using:
 
-- Local OpenAPI specifications
-- Remote OpenAPI specifications
-- HTML source
-- JavaScript source
-- Fetch calls
-- Axios calls
-- Explicit HTTP methods
-- Common API route patterns
+* Local OpenAPI specifications
+* Remote OpenAPI specifications
+* HTML source
+* JavaScript source
+* Fetch calls
+* Axios calls
+* Explicit HTTP methods
+* Common API route patterns
 
 ### 3.2 Authentication Testing
 
 The framework supports:
 
-- Session-based authentication
-- JWT-based authentication
-- Administrative users
-- Normal users
-- Anonymous requests
-- Invalid-token testing
-- Login success and failure testing
+* Session-based authentication
+* JWT-based authentication
+* Administrative users
+* Normal users
+* Anonymous requests
+* Invalid-token testing
+* Login success and failure testing
 
 ### 3.3 Authorization Testing
 
 The framework tests:
 
-- Authentication boundaries
-- Horizontal authorization
-- Vertical authorization
-- Role-based access
-- Ownership-based access
-- Resource-level authorization
+* Authentication boundaries
+* Horizontal authorization
+* Vertical authorization
+* Role-based authorization
+* Ownership-based authorization
+* Resource-level authorization
+* Own-resource access
+* Other-resource access
 
 ### 3.4 Resource Discovery
 
 The framework can discover resource IDs from collection endpoints.
 
-For example:
+Example:
 
 ```text
 GET /api/documents
 GET /api/documents/{doc_id}
 ```
 
-The collection endpoint can be used to discover valid document IDs before testing the item endpoint.
+The collection endpoint can be used to discover valid document IDs before testing item-level endpoints.
 
-### 3.5 Reporting
+### 3.5 BOLA / IDOR Detection
+
+The harness can test whether a user can access a resource belonging to another user.
+
+The ownership-testing flow is:
+
+```text
+Authenticated User
+       ↓
+JWT Ownership Evidence
+       ↓
+Identify Own Resource
+       ↓
+Identify Other Resource
+       ↓
+Request Other Resource
+       ↓
+Compare With Expected Policy
+       ↓
+PASS / FAIL / INCONCLUSIVE
+```
+
+This provides stronger evidence than simply changing an ID and checking whether the server returns HTTP 200.
+
+### 3.6 JWT Ownership Evidence
+
+For JWT-authenticated applications, the framework can decode JWT claims and use relevant ownership information as independent evidence.
+
+For example:
+
+```json
+{
+  "sub": "2",
+  "email": "user@example.com"
+}
+```
+
+If a resource contains an owner/user identifier that can be reliably mapped to the authenticated JWT subject, the framework can establish ownership.
+
+The ownership evidence is then used during test generation.
+
+Conceptually:
+
+```text
+Resource
+   ↓
+Ownership Evidence
+   ↓
+Authorization Policy
+   ↓
+Expected Result
+```
+
+### 3.7 False-Positive Prevention
+
+The framework avoids treating ambiguous identifiers as ownership evidence.
+
+For example, a path parameter such as:
+
+```text
+bid
+```
+
+may represent a basket identifier in one endpoint but may not represent ownership in another endpoint.
+
+The framework therefore uses explicit resource mappings where required and avoids unsafe assumptions.
+
+It also protects against ambiguous multi-parameter paths where more than one parameter could represent a resource identifier.
+
+### 3.8 Inconclusive Results
+
+Not every authorization test can reliably determine whether a resource belongs to the current user.
+
+Instead of incorrectly reporting such cases as vulnerabilities, the framework supports a fourth result state:
+
+```text
+PASS
+FAIL
+SKIPPED
+INCONCLUSIVE
+```
+
+`INCONCLUSIVE` means that the test executed or was considered, but reliable ownership or expected authorization evidence was not available.
+
+This helps reduce false-positive security findings.
+
+### 3.9 Reporting
 
 The harness generates:
 
-- HTML reports
-- PDF reports
-- JSON reports
+* HTML reports
+* PDF reports
+* JSON reports
 
-Reports contain:
+Reports contain information such as:
 
-- Test ID
-- Category
-- HTTP method
-- Request path
-- Tested role
-- Expected status
-- Actual status
-- Result
-- Description
-- Failure information
+* Test ID
+* Category
+* HTTP method
+* Request path
+* Tested role
+* Expected status
+* Actual status
+* Result
+* Description
+* Failure information
 
 ---
 
 ## 4. Architecture
 
-The project follows a modular architecture.
+The current architecture is:
 
 ```text
-                         +----------------------+
-                         |     Target App       |
-                         |  API / Web App       |
-                         +----------+-----------+
-                                    |
-                                    v
-                         +----------------------+
-                         |      Discovery       |
-                         | OpenAPI / HTML / JS  |
-                         +----------+-----------+
-                                    |
-                                    v
-                         +----------------------+
-                         | Resource Discovery   |
-                         | Resource IDs / Roles |
-                         +----------+-----------+
-                                    |
-                                    v
-                         +----------------------+
-                         |   Authentication     |
-                         | Admin / User / JWT   |
-                         +----------+-----------+
-                                    |
-                                    v
-                         +----------------------+
-                         |  Authorization       |
-                         |       Policy         |
-                         +----------+-----------+
-                                    |
-                                    v
-                         +----------------------+
-                         |   Test Generator     |
-                         +----------+-----------+
-                                    |
-                                    v
-                         +----------------------+
-                         |      Execution       |
-                         +----------+-----------+
-                                    |
-                                    v
-                         +----------------------+
-                         | Finding Generation   |
-                         +----------+-----------+
-                                    |
-                                    v
-                         +----------------------+
-                         |      Reporting       |
-                         | HTML / PDF / JSON    |
-                         +----------------------+
+                    Target Application
+                           |
+                           v
+                    Endpoint Discovery
+                           |
+                           v
+                    Resource Discovery
+                           |
+                           v
+                  Ownership Evidence
+                           |
+                           v
+                  Authentication
+                           |
+                           v
+                 Authorization Policy
+                           |
+                           v
+                    Test Generation
+                           |
+                           v
+                     Test Execution
+                           |
+                           v
+                  Finding Classification
+                           |
+                           v
+                       Reporting
 ```
 
-The design keeps discovery, test generation, execution, and reporting separate so that the framework can be extended to additional target applications.
+The ownership-aware authorization model is:
+
+```text
+Resource
+   ↓
+Ownership Evidence
+   ↓
+Policy
+   ↓
+Expected Result
+   ↓
+Test
+   ↓
+Observed Response
+   ↓
+PASS / FAIL / SKIPPED / INCONCLUSIVE
+```
+
+The design keeps discovery, ownership analysis, test generation, execution, and reporting separate so the framework can be extended to additional targets.
 
 ---
 
 ## 5. Discovery Modes
 
-The harness supports multiple API discovery approaches.
-
 ### 5.1 OpenAPI Discovery
 
-When an OpenAPI specification is available, the harness can use it as the primary source of API information.
+OpenAPI is the preferred structured discovery source when available.
 
-The specification provides information such as:
+It provides information such as:
 
-- Endpoint paths
-- HTTP methods
-- Parameters
-- Request bodies
-- Authentication requirements
-- Response information
+* API paths
+* HTTP methods
+* Parameters
+* Request bodies
+* Authentication requirements
+* Response information
 
 Example:
 
 ```yaml
 paths:
-  /api/documents/{doc_id}:
+  /api/documents:
     get:
-      parameters:
-        - name: doc_id
-          in: path
-          required: true
-          schema:
-            type: integer
+      responses:
+        "200":
+          description: Success
 ```
 
-The harness uses this information to generate access-control tests.
-
 ### 5.2 Local OpenAPI Discovery
-
-A local OpenAPI file can be supplied directly.
 
 Example:
 
@@ -243,13 +324,9 @@ python3 -m harness.orchestrator \
   --openapi-file target/openapi.yaml
 ```
 
-This is useful when the target application already provides an OpenAPI specification in the project repository.
-
 ### 5.3 Remote OpenAPI Discovery
 
-The harness can also search common OpenAPI locations on the target.
-
-Examples include:
+The framework can check common locations such as:
 
 ```text
 /openapi.json
@@ -259,33 +336,32 @@ Examples include:
 /v3/api-docs
 ```
 
-If a valid OpenAPI document is found, it is used for API discovery.
-
 ### 5.4 Passive HTML and JavaScript Discovery
 
-If OpenAPI is not available, the framework can inspect HTML and JavaScript source.
+When OpenAPI is unavailable, the framework can inspect application source code.
 
-The discovery system looks for:
+It can identify:
 
-- API URLs
-- API paths
-- fetch()
-- axios()
-- API helper functions
-- HTTP method declarations
-- HTML form actions
-- Links
-- Script sources
+* API URLs
+* API paths
+* Fetch calls
+* Axios calls
+* Angular HttpClient calls
+* HTTP method declarations
+* HTML form actions
+* Links
+* Script sources
+* Common API route patterns
 
 Example:
 
 ```javascript
 fetch("/api/auth/logout", {
     method: "POST"
-});
+})
 ```
 
-The harness can identify:
+can be identified as:
 
 ```text
 POST /api/auth/logout
@@ -293,31 +369,23 @@ POST /api/auth/logout
 
 ### 5.5 Discovery Priority
 
-The orchestrator follows this general priority:
+The preferred discovery order is:
 
 ```text
-1. Explicit local OpenAPI specification
-              |
-              v
-2. Automatic remote OpenAPI discovery
-              |
-              v
+1. Explicit local OpenAPI
+2. Automatic remote OpenAPI
 3. Passive HTML / JavaScript discovery
 ```
-
-This allows the framework to use the most structured information available while still supporting applications without OpenAPI documentation.
 
 ---
 
 ## 6. Authentication
 
-Authentication is required before authorization testing can be performed correctly.
-
-The harness supports different authentication mechanisms.
+Authentication is required before most authorization tests can be performed.
 
 ### 6.1 Session Authentication
 
-Session-based applications can be tested using:
+Session-based applications can use:
 
 ```text
 Username
@@ -325,7 +393,7 @@ Password
 Session Cookie
 ```
 
-The framework logs in and stores the resulting authentication state.
+The framework logs in and maintains the authentication state for subsequent requests.
 
 ### 6.2 JWT Authentication
 
@@ -340,15 +408,13 @@ Authorization Header
 
 Example:
 
-```http
+```text
 Authorization: Bearer <token>
 ```
 
 ### 6.3 Multiple User Roles
 
-The framework can test different users.
-
-Typical roles include:
+The framework can support roles such as:
 
 ```text
 Admin
@@ -357,11 +423,11 @@ User
 Anonymous
 ```
 
-The actual roles depend on the target application's authorization policy.
+The actual roles depend on the target application's policy.
 
 ### 6.4 Anonymous Testing
 
-Anonymous requests are important because protected endpoints should normally reject unauthenticated access.
+Protected endpoints can be tested without authentication.
 
 Expected responses may include:
 
@@ -371,15 +437,19 @@ Expected responses may include:
 302 Redirect
 ```
 
-The expected behavior is defined by the target's authorization policy.
+depending on the application's policy.
+
+### 6.5 Invalid Token Testing
+
+The framework can also test behavior when an invalid or unusable authentication token is supplied.
 
 ---
 
 ## 7. Resource Discovery
 
-Authorization testing often requires valid resource IDs.
+Resource discovery identifies valid resources that can be used during authorization testing.
 
-For example:
+Example:
 
 ```text
 GET /api/documents
@@ -388,15 +458,17 @@ GET /api/documents
 may return:
 
 ```json
-{
-  "documents": [
-    {"id": 8},
-    {"id": 9}
-  ]
-}
+[
+  {
+    "id": 8
+  },
+  {
+    "id": 9
+  }
+]
 ```
 
-The framework can use these IDs when testing:
+The discovered IDs can then be tested against:
 
 ```text
 GET /api/documents/8
@@ -405,7 +477,7 @@ GET /api/documents/9
 
 ### 7.1 Resource Ownership
 
-The harness separates resources into logical categories such as:
+Resources can be categorized as:
 
 ```text
 own
@@ -415,72 +487,190 @@ another
 
 Example:
 
-```text
+```yaml
 admin:
-    own: 1
-    other: 2
-    another: 3
+  own: 1
+  other: 2
+  another: 3
 ```
 
-This allows the test generator to test different ownership boundaries.
+This allows the test generator to create ownership-boundary tests.
 
 ### 7.2 Resource Type Inference
 
-Resource names can be inferred from path parameters.
+The framework can infer resource types from route parameters.
+
+For example:
+
+```text
+/api/documents/{doc_id}
+```
+
+can identify:
+
+```text
+doc_id → document resource
+```
+
+The goal is to keep resource discovery as target-independent as possible.
+
+---
+
+## 8. Ownership Evidence
+
+Ownership evidence is used to determine whether a resource belongs to the authenticated user.
+
+Possible evidence sources include:
+
+* JWT claims
+* Resource owner identifiers
+* Authenticated user identity
+* Explicit target-specific mappings
+
+For JWT-based applications, relevant claims can be decoded and compared with resource ownership information.
 
 Example:
 
 ```text
-doc_id
+JWT subject = 2
+Resource owner = 2
+
+→ Own resource
 ```
 
-can be interpreted as:
+If the values do not match:
 
 ```text
-doc
+JWT subject = 2
+Resource owner = 5
+
+→ Other user's resource
 ```
 
-This allows resource discovery to remain independent from a specific target application.
+The framework only creates strict ownership tests when the ownership relationship can be established with sufficient confidence.
 
 ---
 
-## 8. Authorization Policy
+## 9. BOLA / IDOR Testing
 
-Authorization rules define which users should be allowed to access specific resources.
+**BOLA** stands for Broken Object Level Authorization.
 
-A policy may contain rules such as:
+It occurs when a user can access another user's object by changing an object identifier or otherwise manipulating the request.
+
+Example:
 
 ```text
-Anonymous:
-    protected endpoint -> denied
+User A
+   |
+   +---- owns resource 8
 
-User:
-    own resource -> allowed
-    another user's resource -> denied
-
-Admin:
-    protected resource -> allowed
+User B
+   |
+   +---- owns resource 9
 ```
 
-The exact policy depends on the target application.
+A BOLA test attempts:
 
-The test generator uses these rules to determine expected responses.
+```text
+User B → GET /api/resource/8
+```
+
+If the application allows unauthorized access:
+
+```text
+Expected: 403
+Actual:   200
+Result:   FAIL
+```
+
+### 9.1 Own-Resource Testing
+
+The framework first verifies access to the authenticated user's own resource.
+
+Example:
+
+```text
+User B → Resource 9
+Expected: ALLOW
+```
+
+### 9.2 Other-Resource Testing
+
+The framework then attempts to access a resource associated with another user.
+
+Example:
+
+```text
+User B → Resource 8
+Expected: DENY
+```
+
+### 9.3 Ownership Evidence
+
+Ownership testing is based on independent ownership evidence where possible.
+
+The framework does not assume that every numeric path parameter represents an owner-controlled resource.
+
+### 9.4 Ambiguous Ownership
+
+When ownership cannot be established reliably, the framework reports:
+
+```text
+INCONCLUSIVE
+```
+
+rather than incorrectly reporting:
+
+```text
+FAIL
+```
+
+This is especially important for APIs containing multiple identifiers or application-specific relationships.
 
 ---
 
-## 9. Test Generation
+## 10. Authorization Policy
 
-The test generator creates candidate tests from:
+The authorization policy defines the expected security behavior of the target application.
 
-- Discovered routes
-- HTTP methods
-- Authentication state
-- User roles
-- Resource IDs
-- Authorization policy
-- Path parameters
+Example:
 
-Each generated test contains information such as:
+```json
+{
+  "role": "user",
+  "resource": "document",
+  "operation": "read",
+  "access": "own"
+}
+```
+
+Example expected behavior:
+
+```text
+Anonymous protected endpoint → DENY
+User own resource           → ALLOW
+User other resource         → DENY
+Admin protected resource    → ALLOW
+```
+
+The test generator uses the policy to determine expected responses.
+
+---
+
+## 11. Test Generation
+
+Tests are generated from:
+
+* Discovered routes
+* HTTP methods
+* Authentication state
+* User roles
+* Resource IDs
+* Ownership evidence
+* Authorization policy
+* Path parameters
+
+Generated tests contain information such as:
 
 ```text
 Test ID
@@ -497,20 +687,27 @@ Example:
 
 ```text
 AC-0001
-Category: authentication
+Category: Authentication
 Method: GET
 Path: /api/documents
 Role: anonymous
-Expected: 401 / 403 / 302
+Expected: 401/403/302
+```
+
+Ownership-aware tests may contain:
+
+```text
+Category: Horizontal Authorization
+Resource: document
+Ownership: other
+Expected: DENY
 ```
 
 ---
 
-## 10. Web Authorization Testing
+## 12. Web Authorization Testing
 
-The framework can test web application authorization boundaries.
-
-Examples include:
+The framework can test web endpoints such as:
 
 ```text
 GET /profile
@@ -520,95 +717,147 @@ POST /documents
 DELETE /documents/{id}
 ```
 
-The harness checks whether users receive the expected authorization response.
+The observed response is compared with the expected authorization policy.
 
 ---
 
-## 11. Horizontal Privilege Escalation Testing
+## 13. Horizontal Privilege Escalation
 
-Horizontal privilege escalation occurs when one user can access another user's resources without the required permission.
+Horizontal authorization testing checks whether one user can access another user's resources.
 
 Example:
 
 ```text
-User A owns document 8.
-
-User B attempts:
-
-GET /api/documents/8
+User A owns document 8
+User B owns document 9
 ```
 
-If the application incorrectly allows User B to access the resource, the test can be reported as a failure.
+The harness tests:
 
-The harness uses discovered resource IDs to perform these tests automatically.
+```text
+User B → GET /api/documents/8
+```
+
+Expected:
+
+```text
+DENY
+```
+
+If the application incorrectly allows access:
+
+```text
+Expected: DENY
+Actual:   ALLOW
+Result:   FAIL
+```
+
+This is a key mechanism used for BOLA/IDOR detection.
 
 ---
 
-## 12. Vertical Privilege Escalation Testing
+## 14. Vertical Privilege Escalation
 
-Vertical privilege escalation occurs when a lower-privileged user can access functionality intended for a higher-privileged role.
+Vertical authorization testing checks whether a lower-privileged user can perform operations intended for a higher-privileged role.
 
 Example:
 
 ```text
-Admin:
-    DELETE /api/users/{id}
-
-Normal User:
-    attempts the same operation
+Admin → DELETE /api/users/{id}
+User  → DELETE /api/users/{id}
 ```
 
-The expected result should normally be an authorization denial unless the application's policy explicitly permits the operation.
+Expected:
+
+```text
+Admin → ALLOW
+User  → DENY
+```
+
+Unexpected access is reported as a failure.
 
 ---
 
-## 13. Authentication Boundary Testing
+## 15. Authentication Boundary Testing
 
-The harness also tests requests without valid authentication.
-
-Examples include:
+The framework can test:
 
 ```text
 Anonymous request
 Invalid session
 Invalid JWT
 Missing authentication
+Expired or unusable authentication state
 ```
 
-The expected result depends on the application's security policy.
-
-Typical protected-endpoint responses are:
-
-```text
-401
-403
-302
-```
+Expected behavior depends on the target policy.
 
 ---
 
-## 14. Destructive-Test Safety
+## 16. Result Classification
 
-Some authorization tests can modify or delete data.
+The framework supports four result states:
+
+### PASS
+
+The observed behavior matches the expected security policy.
+
+### FAIL
+
+The observed behavior violates the expected security policy.
+
+Example:
+
+```text
+Expected: 403
+Actual:   200
+Result:   FAIL
+```
+
+### SKIPPED
+
+The test was not executed because the required conditions were unavailable or the test was intentionally excluded.
+
+### INCONCLUSIVE
+
+The test could not establish a sufficiently reliable security conclusion.
+
+For example:
+
+```text
+Resource ownership cannot be reliably established
+```
+
+The framework uses `INCONCLUSIVE` to avoid treating uncertain ownership relationships as confirmed vulnerabilities.
+
+### ERROR
+
+`ERROR` represents a testing or configuration problem such as:
+
+* Missing configuration
+* Connection failure
+* Invalid test setup
+* Missing required authentication state
+* Unexpected execution exception
+
+`ERROR` is different from a security `FAIL`.
+
+---
+
+## 17. Destructive-Test Safety
+
+Some HTTP methods can modify application state.
 
 Examples:
 
 ```text
-DELETE
+POST
 PUT
 PATCH
-POST
+DELETE
 ```
 
-To prevent accidental destructive actions, the harness supports an explicit safety option.
-
-Example:
-
-```bash
---allow-destructive
-```
-
-Destructive tests should only be enabled when the target application is controlled and safe to modify.
+Destructive testing must be explicitly enabled.
 
 Example:
 
@@ -622,99 +871,40 @@ Never run destructive tests against systems without authorization.
 
 ---
 
-## 15. Finding Generation
+## 18. Controlled and Tested Applications
 
-After executing a test, the framework compares:
+The repository contains controlled applications for reproducible security testing.
 
-```text
-Expected Status
-        vs
-Actual Status
-```
+The framework can also be used against approved vulnerable applications and authorized testing environments.
 
-The result is classified as:
+### 18.1 Target 1
 
-```text
-PASS
-FAIL
-ERROR
-```
+Target 1 is a controlled application used to verify expected secure behavior.
 
-### PASS
-
-PASS means the application returned a response that matches the expected authorization behavior.
-
-Example:
+The latest demonstration result is:
 
 ```text
-Expected: 403
-Actual:   403
-
-Result: PASS
-```
-
-### FAIL
-
-FAIL means the application returned behavior that does not match the expected security policy.
-
-Example:
-
-```text
-Expected: 403
-Actual:   200
-
-Result: FAIL
-```
-
-A FAIL can represent an authorization weakness or another unexpected security behavior.
-
-### ERROR
-
-ERROR means the test could not be executed correctly because of a testing or configuration problem.
-
-Examples:
-
-```text
-Missing authentication data
-Missing resource ID
-Invalid test configuration
-Connection failure
-```
-
-ERROR should not be treated as PASS or FAIL.
-
----
-
-## 16. Controlled Target Applications
-
-The repository contains controlled applications for security testing.
-
-### 16.1 Target 1
-
-Target 1 is a controlled secure application used to verify that the harness correctly identifies expected secure behavior.
-
-The final demonstration result is:
-
-```text
-40 PASS
+35 PASS
 0 FAIL
+5 SKIPPED
+0 INCONCLUSIVE
 0 ERROR
 40 TOTAL
 ```
 
-Overall result:
+Overall:
 
 ```text
 PASS
 ```
 
-### 16.2 SECUREHUB
+### 18.2 SECUREHUB
 
 SECUREHUB is a controlled intentionally vulnerable demonstration application created for the project.
 
 It is used to demonstrate that the harness can identify unexpected authorization behavior.
 
-The final demonstration result is:
+The demonstration result is:
 
 ```text
 30 PASS
@@ -723,42 +913,60 @@ The final demonstration result is:
 32 TOTAL
 ```
 
-Overall result:
-
-```text
-FAIL
-```
-
 The two FAIL results are retained because the application intentionally demonstrates behavior that does not match the expected authorization policy.
 
-The harness should report the actual result rather than artificially converting vulnerabilities into PASS results.
+### 18.3 OWASP Juice Shop
 
-### 16.3 Other Supported Targets
+The harness was also tested against **OWASP Juice Shop** as an additional vulnerable target.
 
-The project structure can also support additional controlled applications such as:
+The current test execution generated:
+
+```text
+102 TOTAL
+```
+
+Results:
+
+```text
+74 PASS
+4 FAIL
+4 SKIPPED
+20 INCONCLUSIVE
+0 ERROR
+```
+
+The four FAIL results correspond to identified BOLA/IDOR authorization findings.
+
+The INCONCLUSIVE results represent cases where ownership could not be established with sufficient confidence.
+
+This demonstrates the benefit of separating confirmed authorization failures from uncertain ownership cases.
+
+### 18.4 Other Supported Targets
+
+The project structure can support additional controlled or authorized applications such as:
 
 ```text
 Target 2
 WebGoat
-Juice Shop
+OWASP Juice Shop
 Other approved local or test environments
 ```
 
-These targets can be used for development and future testing.
-
 ---
 
-## 17. Final Demonstration Results
+## 19. Final Demonstration Results
 
 ### Target 1
 
 ```text
 Target: Target 1
 
-PASS   : 40
-FAIL   : 0
-ERROR  : 0
-TOTAL  : 40
+PASS         : 35
+FAIL         : 0
+SKIPPED      : 5
+INCONCLUSIVE : 0
+ERROR        : 0
+TOTAL        : 40
 
 Overall: PASS
 ```
@@ -776,52 +984,60 @@ TOTAL  : 32
 Overall: FAIL
 ```
 
-The difference demonstrates two important capabilities of the framework:
+### OWASP Juice Shop
 
-1. It can verify secure authorization behavior.
-2. It can identify authorization behavior that does not match the expected security policy.
+```text
+Target: OWASP Juice Shop
+
+PASS         : 74
+FAIL         : 4
+SKIPPED      : 4
+INCONCLUSIVE : 20
+ERROR        : 0
+TOTAL        : 102
+```
+
+The Juice Shop results demonstrate that the framework can:
+
+1. Identify confirmed authorization failures.
+2. Test own-resource and other-resource access.
+3. Use JWT ownership evidence.
+4. Avoid unsupported ownership assumptions.
+5. Classify uncertain cases as INCONCLUSIVE.
 
 ---
 
-## 18. Reports
+## 20. Reports
 
-The final demonstration reports are stored in:
+The generated reports are stored in:
 
 ```text
 reports/
 ```
 
-### Target 1 Reports
+Available report formats:
 
 ```text
-reports/Target_1_access_control_report.html
-reports/Target_1_access_control_report.json
-reports/Target_1_access_control_report.pdf
-```
-
-### SECUREHUB Reports
-
-```text
-reports/SECUREHUB_access_control_report.html
-reports/SECUREHUB_access_control_report.json
-reports/SECUREHUB_access_control_report.pdf
+HTML
+PDF
+JSON
 ```
 
 ### HTML Report
 
-The HTML report provides a browser-friendly view of the test results.
+Provides a browser-friendly view of the test results.
 
 ### PDF Report
 
-The PDF report provides a shareable security assessment document.
+Provides a shareable security assessment document.
 
 ### JSON Report
 
-The JSON report provides machine-readable test results that can be processed by other tools.
+Provides machine-readable test results that can be processed by other tools.
 
 ---
 
-## 19. Project Structure
+## 21. Project Structure
 
 ```text
 access-control-test-harness/
@@ -840,7 +1056,8 @@ access-control-test-harness/
 │   ├── orchestrator.py
 │   ├── reporting.py
 │   ├── resource_discovery.py
-│   └── test_generator.py
+│   ├── test_generator.py
+│   └── web_execution.py
 │
 ├── target1-app/
 │   ├── app.py
@@ -871,88 +1088,104 @@ access-control-test-harness/
 
 ---
 
-## 20. Important Modules
+## 22. Important Modules
 
 ### `harness/orchestrator.py`
 
 Responsible for:
 
-- Loading target configuration
-- Selecting discovery mode
-- Loading authorization policy
-- Running authentication
-- Generating tests
-- Executing tests
-- Producing reports
+* Loading target configuration
+* Selecting discovery mode
+* Loading authorization policy
+* Running authentication
+* Generating tests
+* Executing tests
+* Classifying results
+* Producing reports
 
 ### `harness/discovery.py`
 
 Responsible for:
 
-- OpenAPI discovery
-- Remote OpenAPI discovery
-- HTML discovery
-- JavaScript discovery
+* OpenAPI discovery
+* Remote OpenAPI discovery
+* HTML discovery
+* JavaScript discovery
 
 ### `harness/api_route_discovery.py`
 
 Responsible for:
 
-- Discovering API routes from source code
-- Detecting fetch calls
-- Detecting Axios calls
-- Detecting explicit HTTP methods
+* Source-code API discovery
+* Fetch detection
+* Axios detection
+* Angular HttpClient detection
+* HTTP method detection
+* Common API route detection
 
 ### `harness/resource_discovery.py`
 
 Responsible for:
 
-- Discovering resources
-- Extracting resource IDs
-- Determining resource ownership
-- Building role-based resource data
+* Discovering resources
+* Extracting resource IDs
+* Determining resource ownership
+* JWT ownership evidence
+* Building role-based resource data
+* Applying target-specific ownership mappings where necessary
 
 ### `harness/authentication.py`
 
 Responsible for:
 
-- Login
-- Session authentication
-- JWT authentication
-- Authentication state
+* Login
+* Session authentication
+* JWT authentication
+* Authentication state
 
 ### `harness/test_generator.py`
 
 Responsible for:
 
-- Generating authorization tests
-- Generating authentication tests
-- Creating horizontal authorization tests
-- Creating vertical authorization tests
-- Creating invalid-token tests
+* Authentication test generation
+* Authorization test generation
+* Horizontal authorization tests
+* Vertical authorization tests
+* Invalid-token tests
+* Ownership-aware BOLA/IDOR tests
+* Inconclusive ownership handling
 
 ### `harness/execution.py`
 
 Responsible for:
 
-- Sending HTTP requests
-- Applying authentication
-- Applying cookies and tokens
-- Resolving resource placeholders
-- Comparing actual and expected responses
+* Sending HTTP requests
+* Applying authentication
+* Applying cookies and tokens
+* Resolving resource placeholders
+* Comparing actual and expected responses
+
+### `harness/web_execution.py`
+
+Responsible for:
+
+* Web authorization request execution
+* Session handling
+* Web-specific response processing
 
 ### `harness/reporting.py`
 
 Responsible for:
 
-- HTML report generation
-- PDF report generation
-- JSON report generation
-- Summary statistics
+* HTML report generation
+* PDF report generation
+* JSON report generation
+* Result summaries
+* PASS / FAIL / SKIPPED / INCONCLUSIVE / ERROR reporting
 
 ---
 
-## 21. Installation
+## 23. Installation
 
 Clone the repository:
 
@@ -987,11 +1220,9 @@ python3 -m py_compile harness/*.py
 
 ---
 
-## 22. Configure Credentials
+## 24. Configure Credentials
 
 Credentials should not be committed to the repository.
-
-For Target 1, credentials can be provided through environment variables.
 
 Example:
 
@@ -1016,11 +1247,11 @@ Public documentation
 
 ---
 
-## 23. Running Target 1
+## 25. Running Target 1
 
 Start the Target 1 application in the target environment.
 
-Then configure credentials:
+Configure credentials:
 
 ```bash
 export ADMIN_USERNAME='admin'
@@ -1037,20 +1268,22 @@ python3 -m harness.orchestrator \
   --allow-destructive
 ```
 
-Expected final result:
+The latest demonstration produced:
 
 ```text
-40 PASS
+35 PASS
 0 FAIL
+5 SKIPPED
+0 INCONCLUSIVE
 0 ERROR
 40 TOTAL
 ```
 
 ---
 
-## 24. Running SECUREHUB
+## 26. Running SECUREHUB
 
-SECUREHUB can be tested against the approved deployed demonstration environment or another controlled deployment.
+SECUREHUB can be tested against an approved controlled deployment.
 
 Example:
 
@@ -1069,13 +1302,13 @@ python3 -m harness.orchestrator \
   --auth-type session
 ```
 
-The command uses the local OpenAPI specification from:
+The command uses:
 
 ```text
 securehub/openapi.yaml
 ```
 
-The final controlled demonstration result is:
+The demonstration result is:
 
 ```text
 30 PASS
@@ -1088,7 +1321,7 @@ The FAIL results should remain visible because they demonstrate behavior that do
 
 ---
 
-## 25. Policy Learning
+## 27. Policy Learning
 
 The project can use a baseline authorization policy to define expected behavior.
 
@@ -1118,11 +1351,11 @@ The policy should represent the intended security behavior of the target applica
 
 ---
 
-## 26. Git Collaboration Workflow
+## 28. Git Collaboration Workflow
 
-The project uses a shared `main` branch for collaboration.
+The project uses Git for collaborative development.
 
-Each team member works on their assigned modules and commits their genuine work using their own GitHub-linked account.
+Each team member works on assigned modules and commits their genuine work using their own GitHub-linked account.
 
 Before starting work:
 
@@ -1158,7 +1391,7 @@ Push:
 git push origin main
 ```
 
-If another team member has pushed changes before you:
+If another team member has pushed changes:
 
 ```bash
 git pull --rebase origin main
@@ -1169,7 +1402,7 @@ Do not force-push to the shared `main` branch.
 
 ---
 
-## 27. Team Members and Responsibilities
+## 29. Team Members and Responsibilities
 
 ### Athulya Binu
 
@@ -1184,12 +1417,12 @@ harness/execution.py
 
 Main responsibilities:
 
-- Test execution
-- Target orchestration
-- Authentication state handling during execution
-- Request execution
-- Expected vs actual result comparison
-- Integration of the complete testing pipeline
+* Test execution
+* Target orchestration
+* Authentication state handling during execution
+* Request execution
+* Expected vs actual result comparison
+* Integration of the complete testing pipeline
 
 ### Abishiha S
 
@@ -1205,13 +1438,13 @@ harness/resource_discovery.py
 
 Main responsibilities:
 
-- OpenAPI discovery
-- Remote API discovery
-- HTML/JavaScript discovery
-- API route detection
-- Resource discovery
-- Resource ID extraction
-- Resource ownership discovery
+* OpenAPI discovery
+* Remote API discovery
+* HTML/JavaScript discovery
+* API route detection
+* Resource discovery
+* Resource ID extraction
+* Resource ownership discovery
 
 ### Jyothykrishna C V
 
@@ -1226,14 +1459,15 @@ harness/test_generator.py
 
 Main responsibilities:
 
-- Authentication
-- Session handling
-- JWT handling
-- Authentication test generation
-- Authorization test generation
-- Horizontal authorization tests
-- Vertical authorization tests
-- Invalid-token testing
+* Authentication
+* Session handling
+* JWT handling
+* Authentication test generation
+* Authorization test generation
+* Horizontal authorization tests
+* Vertical authorization tests
+* Invalid-token testing
+* Ownership-aware authorization test generation
 
 ### Adithya A S
 
@@ -1249,23 +1483,23 @@ securehub/
 
 Main responsibilities:
 
-- HTML reports
-- PDF reports
-- JSON reports
-- Target application maintenance
-- Target 1 controlled application
-- SECUREHUB controlled demonstration application
+* HTML reports
+* PDF reports
+* JSON reports
+* Target application maintenance
+* Target 1 controlled application
+* SECUREHUB controlled demonstration application
 
 ---
 
-## 28. Testing Recommendations
+## 30. Testing Recommendations
 
 Testing should be performed only against:
 
-- Local applications
-- Authorized test environments
-- Applications specifically provided for security testing
-- Controlled vulnerable applications
+* Local applications
+* Authorized test environments
+* Applications specifically provided for security testing
+* Controlled vulnerable applications
 
 Recommended workflow:
 
@@ -1273,13 +1507,15 @@ Recommended workflow:
 1. Start the target application
 2. Verify the target is reachable
 3. Verify authentication credentials
-4. Run discovery
+4. Run endpoint discovery
 5. Verify discovered endpoints
 6. Run resource discovery
-7. Generate tests
-8. Execute tests
-9. Review PASS / FAIL / ERROR
-10. Review generated reports
+7. Establish ownership evidence where possible
+8. Load or infer authorization policy
+9. Generate tests
+10. Execute tests
+11. Review PASS / FAIL / SKIPPED / INCONCLUSIVE / ERROR
+12. Review generated reports
 ```
 
 For destructive tests:
@@ -1290,24 +1526,29 @@ Use --allow-destructive only when appropriate.
 
 ---
 
-## 29. Limitations
-
-The framework has some limitations.
+## 31. Limitations
 
 ### Application-Specific Behavior
 
 Different applications may use different:
 
-- Authentication mechanisms
-- Authorization rules
-- Response codes
-- Resource structures
+* Authentication mechanisms
+* Authorization rules
+* Response codes
+* Resource structures
+* Ownership models
 
-Therefore, configuration and policies may need to be adjusted for each target.
+Configuration and policies may therefore need to be adjusted for each target.
 
 ### Resource Discovery
 
 Resource discovery depends on the application exposing usable collection endpoints or discoverable resource information.
+
+### Ownership Discovery
+
+Ownership testing requires reliable evidence connecting an authenticated user to a resource.
+
+JWT claims can provide useful evidence, but not every application exposes ownership information in its token.
 
 ### Dynamic Applications
 
@@ -1321,9 +1562,21 @@ Applications using complex multi-step authentication, MFA, CAPTCHA, or browser-o
 
 The framework requires an expected authorization model to determine whether an observed response is correct.
 
+### Inconclusive Cases
+
+Some tests may not provide enough evidence to confirm either secure or insecure ownership behavior.
+
+These cases are reported as:
+
+```text
+INCONCLUSIVE
+```
+
+instead of being treated as confirmed vulnerabilities.
+
 ---
 
-## 30. Security and Ethical Use
+## 32. Security and Ethical Use
 
 This project is intended for authorized security testing and education.
 
@@ -1343,7 +1596,7 @@ Use controlled environments whenever possible.
 
 ---
 
-## 31. Verification
+## 33. Verification
 
 Before committing changes, verify Python syntax:
 
@@ -1369,7 +1622,7 @@ Check untracked files:
 git status --short --untracked-files=all
 ```
 
-Run the final Target 1 test:
+Run the Target 1 test:
 
 ```bash
 python3 -m harness.orchestrator \
@@ -1377,75 +1630,64 @@ python3 -m harness.orchestrator \
   --allow-destructive
 ```
 
-Run the final SECUREHUB test:
-
-```bash
-python3 -m harness.orchestrator \
-  --url https://securehub-di8a.onrender.com \
-  --target-name "SECUREHUB" \
-  --openapi-file securehub/openapi.yaml \
-  --admin-user 'admin' \
-  --admin-pass 'your-admin-password' \
-  --user-user 'charlie' \
-  --user-pass 'your-user-password' \
-  --login-path '/api/auth/login' \
-  --username-field 'username' \
-  --password-field 'password' \
-  --auth-type session
-```
-
-Verify that the final reports exist:
+Verify generated reports:
 
 ```bash
 ls -lh reports/
 ```
 
-Expected report files:
-
-```text
-Target_1_access_control_report.html
-Target_1_access_control_report.json
-Target_1_access_control_report.pdf
-SECUREHUB_access_control_report.html
-SECUREHUB_access_control_report.json
-SECUREHUB_access_control_report.pdf
-```
-
 ---
 
-## 32. Final Project Outcome
+## 34. Final Project Outcome
 
 The completed project demonstrates an automated access-control testing workflow.
 
-The framework can:
+The overall process is:
 
 ```text
 Discover APIs
      ↓
-Authenticate users
+Authenticate Users
      ↓
-Discover resources
+Discover Resources
      ↓
-Build authorization policy
+Establish Ownership Evidence
      ↓
-Generate security tests
+Build Authorization Policy
      ↓
-Execute requests
+Generate Security Tests
      ↓
-Compare expected and actual behavior
+Execute Requests
      ↓
-Identify PASS / FAIL / ERROR
+Compare Expected and Actual Behavior
      ↓
-Generate HTML / PDF / JSON reports
+Classify Results
+     ↓
+Generate HTML / PDF / JSON Reports
 ```
 
-The final demonstration verifies both secure and intentionally vulnerable behavior.
+The framework supports:
+
+```text
+Authentication Testing
+Authorization Testing
+Horizontal Authorization Testing
+Vertical Authorization Testing
+Resource-Level Authorization
+BOLA / IDOR Testing
+JWT Ownership Evidence
+False-Positive Prevention
+Inconclusive Classification
+Automated Reporting
+```
 
 ### Target 1
 
 ```text
-40 PASS
+35 PASS
 0 FAIL
+5 SKIPPED
+0 INCONCLUSIVE
 0 ERROR
 40 TOTAL
 ```
@@ -1463,11 +1705,24 @@ This demonstrates expected secure authorization behavior.
 
 This demonstrates that the framework can identify behavior that violates the expected authorization policy.
 
+### OWASP Juice Shop
+
+```text
+74 PASS
+4 FAIL
+4 SKIPPED
+20 INCONCLUSIVE
+0 ERROR
+102 TOTAL
+```
+
+This demonstrates the framework's BOLA/IDOR testing capability using ownership evidence and its ability to distinguish confirmed findings from uncertain ownership cases.
+
 The project therefore demonstrates automated access-control testing rather than simply sending individual manual requests.
 
 ---
 
-## 33. Repository
+## 35. Repository
 
 The project is maintained as a collaborative Git repository.
 
@@ -1486,50 +1741,19 @@ Team members should commit only their own genuine work and use their own GitHub-
 
 ---
 
-## 34. Project Goal
+## 36. Project Goal
 
-The main goal of the Access-Control Test Harness is to provide a reusable and target-independent framework for testing authentication and authorization controls.
+The main goal of the Automated Access-Control Test Harness is to provide a reusable and target-independent framework for testing authentication and authorization controls.
 
 The project demonstrates how automated security testing can help identify:
 
-- Missing authentication
-- Incorrect authorization
-- Horizontal privilege escalation
-- Vertical privilege escalation
-- Resource-level access-control weaknesses
-- Unexpected authentication behavior
+* Missing authentication
+* Incorrect authorization
+* Horizontal privilege escalation
+* Vertical privilege escalation
+* BOLA / IDOR vulnerabilities
+* Resource-level access-control weaknesses
+* Unexpected authentication behavior
+* Ownership-related authorization failures
 
-The framework is designed to be extended with additional discovery methods, authentication mechanisms, authorization policies, target applications, and security tests.
-
----
-
-## 35. Responsible Use
-
-This project is intended for:
-
-- Cybersecurity education
-- Security testing in controlled environments
-- Authorized penetration testing
-- Application security research
-- Demonstration of access-control concepts
-
-Only test systems for which you have explicit authorization.
-
-Never use this framework to access, modify, or delete data belonging to another person or organization without permission.
-
----
-
-## License
-
-This project is developed for educational and authorized security-testing purposes.
-
-Use responsibly and only within permitted environments.
-
----
-
-## Contributors
-
-- Athulya Binu
-- Adithya A S
-- Jyothykrishna C V
-- Abishiha
+The addition of independent ownership evidence and the `INCONCLUSIVE` result state helps the framework make more reliable authorization decisions while reducing false-positive BOLA/IDOR findings.
