@@ -219,32 +219,34 @@ def print_results(results):
     failed = 0
     skipped = 0
     errors = 0
+    inconclusive = 0
 
     statuses = []
 
     for result in results:
-        status = getattr(result, "status", None)
+        # Use the execution result flags as the single source
+        # of truth for console classification.
+        error_text = getattr(result, "error", None)
+        result_skipped = bool(
+            getattr(result, "skipped", False)
+        )
+        result_inconclusive = bool(
+            getattr(result, "inconclusive", False)
+        )
+        result_passed = bool(
+            getattr(result, "passed", False)
+        )
 
-        if status is None:
-            error_text = getattr(result, "error", None)
-
-            if error_text:
-                if "No authentication context available" in str(error_text):
-                    status = "SKIP"
-                else:
-                    status = "ERROR"
-            else:
-                actual = getattr(result, "actual_status", None)
-                expected = getattr(result, "expected_statuses", [])
-
-                if actual is None:
-                    status = "ERROR"
-                elif actual in expected:
-                    status = "PASS"
-                else:
-                    status = "FAIL"
-
-        status = str(status).upper()
+        if error_text:
+            status = "ERROR"
+        elif result_skipped:
+            status = "SKIP"
+        elif result_inconclusive:
+            status = "INCONCLUSIVE"
+        elif result_passed:
+            status = "PASS"
+        else:
+            status = "FAIL"
 
         if status == "PASS":
             passed += 1
@@ -252,9 +254,10 @@ def print_results(results):
             failed += 1
         elif status == "SKIP":
             skipped += 1
+        elif status == "INCONCLUSIVE":
+            inconclusive += 1
         else:
             errors += 1
-            status = "ERROR"
 
         statuses.append((result, status))
 
@@ -275,6 +278,7 @@ def print_results(results):
             "PASS": GREEN,
             "FAIL": RED,
             "SKIP": YELLOW,
+            "INCONCLUSIVE": YELLOW,
             "ERROR": RED,
         }.get(status, WHITE)
 
@@ -316,6 +320,7 @@ def print_results(results):
         f"  {GREEN}{BOLD}Passed : {passed:<4}{RESET}"
         f"  {RED}{BOLD}Failed : {failed:<4}{RESET}"
         f"  {YELLOW}{BOLD}Skipped: {skipped:<4}{RESET}"
+        f"  {YELLOW}{BOLD}Inconclusive: {inconclusive:<4}{RESET}"
         f"  {RED}{BOLD}Errors : {errors:<4}{RESET}"
         f"  {CYAN}{BOLD}Total  : {total:<4}{RESET}"
     )
@@ -325,8 +330,8 @@ def print_results(results):
     # --------------------------------------------------------------
     if failed or errors:
         overall = f"{RED}{BOLD}FAIL{RESET}"
-    elif skipped:
-        overall = f"{YELLOW}{BOLD}PASS WITH SKIPPED TESTS{RESET}"
+    elif inconclusive:
+        overall = f"{YELLOW}{BOLD}INCONCLUSIVE{RESET}"
     else:
         overall = f"{GREEN}{BOLD}PASS{RESET}"
 
@@ -584,6 +589,15 @@ def run(
 
     discovered_resources = resource_discovery.discover()
 
+    ownership_evidence = (
+        getattr(
+            resource_discovery,
+            "ownership_evidence",
+            {},
+        )
+        or {}
+    )
+
     if discovered_resources:
         configured_resources = getattr(
             target,
@@ -775,6 +789,7 @@ def run(
                 "jwt",
             )
         ),
+        ownership_evidence=ownership_evidence,
     )
 
     tests = generator.generate()
@@ -906,6 +921,7 @@ def run(
             target=target,
             accounts=accounts,
             timeout=REQUEST_TIMEOUT,
+            allow_destructive=allow_destructive,
         )
 
         web_results = web_engine.execute_all(

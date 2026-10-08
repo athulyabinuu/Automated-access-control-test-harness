@@ -114,6 +114,10 @@ h2 {
     color: #B91C1C;
 }
 
+.card.inconclusive .card-value {
+    color: #d97706;
+}
+
 .overall {
     margin: 22px 0;
     padding: 22px;
@@ -133,6 +137,12 @@ h2 {
     color: #991b1b;
     background: #fef2f2;
     border: 1px solid #fca5a5;
+}
+
+.overall-inconclusive {
+    color: #92400e;
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
 }
 
 table {
@@ -359,7 +369,7 @@ tbody tr:nth-child(even) {
 
         <div class="meta-row">
             <span class="meta-label">Generated</span>
-            <span class="meta-value">06 October 2026, 16:06:55</span>
+            <span class="meta-value">08 October 2026, 14:31:49</span>
         </div>
     </div>
 </div>
@@ -397,6 +407,11 @@ tbody tr:nth-child(even) {
     <div class="card-value">0</div>
 </div>
 
+<div class="card inconclusive">
+    <div class="card-label">Inconclusive</div>
+    <div class="card-value">0</div>
+</div>
+
 </div>
 
 <div class="overall overall-fail">
@@ -412,6 +427,7 @@ tbody tr:nth-child(even) {
     <th>Total</th>
     <th>Passed</th>
     <th>Failed</th>
+    <th>Inconclusive</th>
 </tr>
 </thead>
 
@@ -424,6 +440,9 @@ tbody tr:nth-child(even) {
                 <td class="fail">
                     1
                 </td>
+                <td class="inconclusive">
+                    0
+                </td>
             </tr>
             
             <tr>
@@ -431,6 +450,9 @@ tbody tr:nth-child(even) {
                 <td>14</td>
                 <td class="pass">14</td>
                 <td class="fail">
+                    0
+                </td>
+                <td class="inconclusive">
                     0
                 </td>
             </tr>
@@ -442,6 +464,9 @@ tbody tr:nth-child(even) {
                 <td class="fail">
                     0
                 </td>
+                <td class="inconclusive">
+                    0
+                </td>
             </tr>
             
             <tr>
@@ -450,6 +475,9 @@ tbody tr:nth-child(even) {
                 <td class="pass">7</td>
                 <td class="fail">
                     1
+                </td>
+                <td class="inconclusive">
+                    0
                 </td>
             </tr>
             
@@ -1178,7 +1206,8 @@ rules.
 A total of <strong>32</strong> automated security tests were
 executed. <strong>30</strong> passed,
 <strong>2</strong> failed,
-<strong>0</strong> were skipped, and
+<strong>0</strong> were skipped,
+<strong>0</strong> were inconclusive, and
 <strong>0</strong> produced errors.
 </p>
 

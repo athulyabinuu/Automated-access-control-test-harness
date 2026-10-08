@@ -114,6 +114,10 @@ h2 {
     color: #B91C1C;
 }
 
+.card.inconclusive .card-value {
+    color: #d97706;
+}
+
 .overall {
     margin: 22px 0;
     padding: 22px;
@@ -133,6 +137,12 @@ h2 {
     color: #991b1b;
     background: #fef2f2;
     border: 1px solid #fca5a5;
+}
+
+.overall-inconclusive {
+    color: #92400e;
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
 }
 
 table {
@@ -359,7 +369,7 @@ tbody tr:nth-child(even) {
 
         <div class="meta-row">
             <span class="meta-label">Generated</span>
-            <span class="meta-value">06 October 2026, 16:20:36</span>
+            <span class="meta-value">08 October 2026, 14:16:55</span>
         </div>
     </div>
 </div>
@@ -379,7 +389,7 @@ tbody tr:nth-child(even) {
 
 <div class="card pass">
     <div class="card-label">Passed</div>
-    <div class="card-value">40</div>
+    <div class="card-value">35</div>
 </div>
 
 <div class="card fail">
@@ -389,11 +399,16 @@ tbody tr:nth-child(even) {
 
 <div class="card">
     <div class="card-label">Skipped</div>
-    <div class="card-value">0</div>
+    <div class="card-value">5</div>
 </div>
 
 <div class="card">
     <div class="card-label">Errors</div>
+    <div class="card-value">0</div>
+</div>
+
+<div class="card inconclusive">
+    <div class="card-label">Inconclusive</div>
     <div class="card-value">0</div>
 </div>
 
@@ -412,6 +427,7 @@ tbody tr:nth-child(even) {
     <th>Total</th>
     <th>Passed</th>
     <th>Failed</th>
+    <th>Inconclusive</th>
 </tr>
 </thead>
 
@@ -420,8 +436,11 @@ tbody tr:nth-child(even) {
             <tr>
                 <td>Authentication</td>
                 <td>8</td>
-                <td class="pass">8</td>
+                <td class="pass">7</td>
                 <td class="fail">
+                    0
+                </td>
+                <td class="inconclusive">
                     0
                 </td>
             </tr>
@@ -429,8 +448,11 @@ tbody tr:nth-child(even) {
             <tr>
                 <td>Authorization</td>
                 <td>12</td>
-                <td class="pass">12</td>
+                <td class="pass">11</td>
                 <td class="fail">
+                    0
+                </td>
+                <td class="inconclusive">
                     0
                 </td>
             </tr>
@@ -438,8 +460,11 @@ tbody tr:nth-child(even) {
             <tr>
                 <td>Horizontal Authorization / IDOR</td>
                 <td>12</td>
-                <td class="pass">12</td>
+                <td class="pass">10</td>
                 <td class="fail">
+                    0
+                </td>
+                <td class="inconclusive">
                     0
                 </td>
             </tr>
@@ -447,8 +472,11 @@ tbody tr:nth-child(even) {
             <tr>
                 <td>JWT Validation</td>
                 <td>8</td>
-                <td class="pass">8</td>
+                <td class="pass">7</td>
                 <td class="fail">
+                    0
+                </td>
+                <td class="inconclusive">
                     0
                 </td>
             </tr>
@@ -1084,11 +1112,11 @@ rules.
                 </td>
                 <td>Control evaluated</td>
                 <td>401, 403</td>
-                <td>401</td>
+                <td>-</td>
                 <td>
-                    <span class="badge pass">
-                        ✓ 
-                        PASS
+                    <span class="badge skip">
+                        
+                        SKIP
                     </span>
                 </td>
             </tr>
@@ -1103,11 +1131,11 @@ rules.
                 </td>
                 <td>Control evaluated</td>
                 <td>401, 403</td>
-                <td>401</td>
+                <td>-</td>
                 <td>
-                    <span class="badge pass">
-                        ✓ 
-                        PASS
+                    <span class="badge skip">
+                        
+                        SKIP
                     </span>
                 </td>
             </tr>
@@ -1122,11 +1150,11 @@ rules.
                 </td>
                 <td>Control evaluated</td>
                 <td>200, 201, 202, 204</td>
-                <td>200</td>
+                <td>-</td>
                 <td>
-                    <span class="badge pass">
-                        ✓ 
-                        PASS
+                    <span class="badge skip">
+                        
+                        SKIP
                     </span>
                 </td>
             </tr>
@@ -1141,11 +1169,11 @@ rules.
                 </td>
                 <td>Control evaluated</td>
                 <td>200, 201, 202, 204</td>
-                <td>200</td>
+                <td>-</td>
                 <td>
-                    <span class="badge pass">
-                        ✓ 
-                        PASS
+                    <span class="badge skip">
+                        
+                        SKIP
                     </span>
                 </td>
             </tr>
@@ -1160,11 +1188,11 @@ rules.
                 </td>
                 <td>Control evaluated</td>
                 <td>401, 403, 404</td>
-                <td>403</td>
+                <td>-</td>
                 <td>
-                    <span class="badge pass">
-                        ✓ 
-                        PASS
+                    <span class="badge skip">
+                        
+                        SKIP
                     </span>
                 </td>
             </tr>
@@ -1265,9 +1293,10 @@ rules.
 
 <p>
 A total of <strong>40</strong> automated security tests were
-executed. <strong>40</strong> passed,
+executed. <strong>35</strong> passed,
 <strong>0</strong> failed,
-<strong>0</strong> were skipped, and
+<strong>5</strong> were skipped,
+<strong>0</strong> were inconclusive, and
 <strong>0</strong> produced errors.
 </p>
 

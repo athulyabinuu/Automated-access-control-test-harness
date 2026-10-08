@@ -1,15 +1,16 @@
 {
   "report_type": "Automated Access Control Security Test Report",
-  "generated_at": "06 October 2026, 16:20:36",
+  "generated_at": "08 October 2026, 14:16:56",
   "target": {
     "name": "Target 1",
     "base_url": "http://127.0.0.1:5000"
   },
   "summary": {
-    "passed": 40,
+    "passed": 35,
     "failed": 0,
-    "skipped": 0,
+    "skipped": 5,
     "errors": 0,
+    "inconclusive": 0,
     "total": 40,
     "overall": "PASS"
   },
@@ -18,32 +19,36 @@
       "Authentication",
       {
         "total": 8,
-        "passed": 8,
-        "failed": 0
+        "passed": 7,
+        "failed": 0,
+        "inconclusive": 0
       }
     ],
     [
       "Authorization",
       {
         "total": 12,
-        "passed": 12,
-        "failed": 0
+        "passed": 11,
+        "failed": 0,
+        "inconclusive": 0
       }
     ],
     [
       "Horizontal Authorization / IDOR",
       {
         "total": 12,
-        "passed": 12,
-        "failed": 0
+        "passed": 10,
+        "failed": 0,
+        "inconclusive": 0
       }
     ],
     [
       "JWT Validation",
       {
         "total": 8,
-        "passed": 8,
-        "failed": 0
+        "passed": 7,
+        "failed": 0,
+        "inconclusive": 0
       }
     ]
   ],
@@ -687,15 +692,13 @@
       "endpoint": "/api/admin/users/{user_id}",
       "rule": "Control evaluated",
       "expected": "401, 403",
-      "actual": "401",
-      "status": "PASS",
+      "actual": "-",
+      "status": "SKIP",
       "finding": "",
       "error": "",
-      "evidence": "HTTP 401 from DELETE /api/admin/users/1",
-      "request_url": "http://127.0.0.1:5000/api/admin/users/1",
-      "response_body": {
-        "error": "Authorization token required"
-      }
+      "evidence": "Destructive HTTP method blocked by default. Use the explicit destructive-test option when testing an authorized target.",
+      "request_url": "",
+      "response_body": null
     },
     {
       "id": "AC-0033",
@@ -705,15 +708,13 @@
       "endpoint": "/api/admin/users/{user_id}",
       "rule": "Control evaluated",
       "expected": "401, 403",
-      "actual": "401",
-      "status": "PASS",
+      "actual": "-",
+      "status": "SKIP",
       "finding": "",
       "error": "",
-      "evidence": "HTTP 401 from DELETE /api/admin/users/1",
-      "request_url": "http://127.0.0.1:5000/api/admin/users/1",
-      "response_body": {
-        "error": "Invalid token"
-      }
+      "evidence": "Destructive HTTP method blocked by default. Use the explicit destructive-test option when testing an authorized target.",
+      "request_url": "",
+      "response_body": null
     },
     {
       "id": "AC-0034",
@@ -723,16 +724,13 @@
       "endpoint": "/api/admin/users/{user_id}",
       "rule": "Control evaluated",
       "expected": "200, 201, 202, 204",
-      "actual": "200",
-      "status": "PASS",
+      "actual": "-",
+      "status": "SKIP",
       "finding": "",
       "error": "",
-      "evidence": "HTTP 200 from DELETE /api/admin/users/3",
-      "request_url": "http://127.0.0.1:5000/api/admin/users/3",
-      "response_body": {
-        "message": "User deleted successfully",
-        "user_id": 3
-      }
+      "evidence": "Destructive HTTP method blocked by default. Use the explicit destructive-test option when testing an authorized target.",
+      "request_url": "",
+      "response_body": null
     },
     {
       "id": "AC-0035",
@@ -742,16 +740,13 @@
       "endpoint": "/api/admin/users/{user_id}",
       "rule": "Control evaluated",
       "expected": "200, 201, 202, 204",
-      "actual": "200",
-      "status": "PASS",
+      "actual": "-",
+      "status": "SKIP",
       "finding": "",
       "error": "",
-      "evidence": "HTTP 200 from DELETE /api/admin/users/2",
-      "request_url": "http://127.0.0.1:5000/api/admin/users/2",
-      "response_body": {
-        "message": "User deleted successfully",
-        "user_id": 2
-      }
+      "evidence": "Destructive HTTP method blocked by default. Use the explicit destructive-test option when testing an authorized target.",
+      "request_url": "",
+      "response_body": null
     },
     {
       "id": "AC-0036",
@@ -761,15 +756,13 @@
       "endpoint": "/api/admin/users/{user_id}",
       "rule": "Control evaluated",
       "expected": "401, 403, 404",
-      "actual": "403",
-      "status": "PASS",
+      "actual": "-",
+      "status": "SKIP",
       "finding": "",
       "error": "",
-      "evidence": "HTTP 403 from DELETE /api/admin/users/1",
-      "request_url": "http://127.0.0.1:5000/api/admin/users/1",
-      "response_body": {
-        "error": "Admin access required"
-      }
+      "evidence": "Destructive HTTP method blocked by default. Use the explicit destructive-test option when testing an authorized target.",
+      "request_url": "",
+      "response_body": null
     },
     {
       "id": "AC-0037",

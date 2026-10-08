@@ -1,3 +1,5 @@
+import re
+
 from dataclasses import dataclass, field
 from typing import Any, Dict, List
 
@@ -47,12 +49,19 @@ class AccessControlTestGenerator:
         endpoints,
         policy: AuthorizationPolicy,
         authentication_type: str = "jwt",
+        ownership_evidence=None,
     ):
         self.endpoints = endpoints
         self.policy = policy
         self.authentication_type = (
             authentication_type or "jwt"
         ).lower()
+
+        # Optional independently discovered ownership evidence.
+        # Existing policy inference is not modified.
+        self.ownership_evidence = (
+            ownership_evidence or {}
+        )
 
     # ========================================================
     # PUBLIC API
@@ -81,6 +90,192 @@ class AccessControlTestGenerator:
     # ========================================================
     # ENDPOINT GENERATION
     # ========================================================
+
+    def _generate_ownership_evidence_tests(
+        self,
+        endpoint,
+        method,
+        path,
+        path_parameters,
+    ):
+        """
+        Generate strict ownership tests only when ownership was
+        independently established from authenticated JWT claims.
+
+        Existing targets without such evidence are unaffected.
+        """
+
+        if not self.ownership_evidence:
+            return []
+
+        if not path_parameters:
+            return []
+
+        # JWT ownership evidence maps one resource ID to one
+        # path parameter. Do not apply it to ambiguous endpoints
+        # containing multiple resource parameters.
+        if len(path_parameters) != 1:
+            return []
+
+        resource_type = (
+            self._resource_type_from_path(path)
+        )
+
+        if not resource_type:
+            return []
+
+        evidence = (
+            self.ownership_evidence.get(
+                resource_type
+            )
+        )
+
+        if not isinstance(
+            evidence,
+            dict,
+        ):
+            return []
+
+        if evidence.get(
+            "source"
+        ) != "jwt_claim":
+            return []
+
+        roles = evidence.get(
+            "roles",
+            {},
+        )
+
+        if not isinstance(
+            roles,
+            dict,
+        ):
+            return []
+
+        tests = []
+
+        for parameter in path_parameters:
+
+            parameter_name = (
+                parameter.get("name")
+            )
+
+            if not parameter_name:
+                continue
+
+            for role, role_data in roles.items():
+
+                if not isinstance(
+                    role_data,
+                    dict,
+                ):
+                    continue
+
+                own = role_data.get(
+                    "own"
+                )
+
+                other = role_data.get(
+                    "other"
+                )
+
+                if (
+                    own is None
+                    or other is None
+                ):
+                    continue
+
+                tests.append(
+                    CandidateTest(
+                        test_id="",
+                        category="ownership",
+                        method=method,
+                        path=path,
+                        role=role,
+                        expected_statuses=(
+                            self.ALLOWED_STATUSES.copy()
+                        ),
+                        parameter_overrides={
+                            parameter_name:
+                                "<own-resource-id>"
+                        },
+                        description=(
+                            "Verify that the authenticated "
+                            "role can access its own "
+                            "JWT-associated resource."
+                        ),
+                    )
+                )
+
+                tests.append(
+                    CandidateTest(
+                        test_id="",
+                        category="horizontal",
+                        method=method,
+                        path=path,
+                        role=role,
+                        expected_statuses=(
+                            self.DENIED_STATUSES.copy()
+                        ),
+                        parameter_overrides={
+                            parameter_name:
+                                "<other-resource-id>"
+                        },
+                        description=(
+                            "Verify that the authenticated "
+                            "role cannot access another "
+                            "authenticated role's resource. "
+                            "Ownership was independently "
+                            "established from JWT resource "
+                            "identifiers."
+                        ),
+                    )
+                )
+
+        return tests
+
+    @staticmethod
+    def _resource_type_from_path(path):
+
+        parts = [
+            part.strip()
+            for part in str(path).split("/")
+            if part.strip()
+        ]
+
+        for index, part in enumerate(parts):
+
+            if not re.fullmatch(
+                r"\{[^{}]+\}",
+                part,
+            ):
+                continue
+
+            if index == 0:
+                return None
+
+            resource = (
+                parts[index - 1]
+                .lower()
+            )
+
+            if resource.endswith("ies"):
+                resource = (
+                    resource[:-3] + "y"
+                )
+
+            elif resource.endswith("ses"):
+                resource = resource[:-2]
+
+            elif (
+                resource.endswith("s")
+                and not resource.endswith("ss")
+            ):
+                resource = resource[:-1]
+
+            return resource
+
+        return None
 
     def _generate_for_endpoint(self, endpoint):
         tests = []
@@ -179,6 +374,23 @@ class AccessControlTestGenerator:
             )
 
         # ----------------------------------------------------
+        # Evidence-based ownership tests
+        # ----------------------------------------------------
+        #
+        # These are generated separately from observed policy.
+        # Therefore a vulnerable HTTP 200 cannot be learned as
+        # an expected authorization result.
+
+        tests.extend(
+            self._generate_ownership_evidence_tests(
+                endpoint=endpoint,
+                method=method,
+                path=path,
+                path_parameters=path_parameters,
+            )
+        )
+
+        # ----------------------------------------------------
         # Policy-driven authorization tests
         # ----------------------------------------------------
 
@@ -242,6 +454,35 @@ class AccessControlTestGenerator:
             # ------------------------------------------------
             # Resource endpoints
             # ------------------------------------------------
+
+            # When independently established JWT ownership evidence
+            # exists for this resource, policy-driven resource tests
+            # are only safe for endpoints with one resource parameter.
+            # Multi-parameter endpoints such as:
+            #   /rest/basket/{id}/coupon/{code}
+            # must not reuse the basket ID for the second parameter.
+            resource_type_for_policy = (
+                self._resource_type_from_path(path)
+            )
+
+            has_jwt_ownership_evidence = (
+                resource_type_for_policy in self.ownership_evidence
+                and isinstance(
+                    self.ownership_evidence.get(
+                        resource_type_for_policy
+                    ),
+                    dict,
+                )
+                and self.ownership_evidence.get(
+                    resource_type_for_policy
+                ).get("source") == "jwt_claim"
+            )
+
+            if (
+                has_jwt_ownership_evidence
+                and len(path_parameters) != 1
+            ):
+                continue
 
             for parameter in path_parameters:
 

@@ -24,6 +24,7 @@ class ExecutionResult:
 
     passed: bool = False
     skipped: bool = False
+    inconclusive: bool = False
 
     request_url: str = ""
     response_body: Any = None
@@ -265,8 +266,19 @@ class AccessControlExecutionEngine:
 
         actual_status = response.status_code
 
+        # HTTP 400 usually means the generated request is missing
+        # required input or contains invalid input. HTTP 5xx means
+        # the target application/server encountered an error.
+        # Neither response is sufficient to establish an
+        # authorization vulnerability.
+        inconclusive = (
+            actual_status in {400, 402}
+            or 500 <= actual_status <= 599
+        )
+
         passed = (
-            actual_status
+            not inconclusive
+            and actual_status
             in test.expected_statuses
         )
 
@@ -275,6 +287,24 @@ class AccessControlExecutionEngine:
             actual_status,
             passed,
         )
+
+        if actual_status == 400:
+            finding = (
+                "Inconclusive authorization result: "
+                f"target returned HTTP 400 for "
+                f"{method} {resolved_path}. "
+                "The request may be missing required input "
+                "or contain invalid input."
+            )
+        elif 500 <= actual_status <= 599:
+            finding = (
+                "Inconclusive authorization result: "
+                f"target returned HTTP {actual_status} for "
+                f"{method} {resolved_path}. "
+                "The target application/server returned an "
+                "error, so authorization could not be "
+                "reliably evaluated."
+            )
 
         evidence = (
             f"HTTP {actual_status} "
@@ -295,6 +325,7 @@ class AccessControlExecutionEngine:
             actual_status=actual_status,
             passed=passed,
             skipped=False,
+            inconclusive=inconclusive,
             request_url=url,
             response_body=body,
             finding=finding,

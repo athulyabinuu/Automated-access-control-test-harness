@@ -1,3 +1,6 @@
+import base64
+import binascii
+import json
 import re
 
 import requests
@@ -39,6 +42,7 @@ class ResourceDiscovery:
         self.endpoints = endpoints or []
         self.timeout = timeout
         self.verify_tls = verify_tls
+        self.ownership_evidence = {}
 
     # ========================================================
     # MAIN DISCOVERY
@@ -70,6 +74,22 @@ class ResourceDiscovery:
                 )
             else:
                 resources[resource_type] = resource_data
+
+        # JWT resource discovery is only a fallback for resources
+        # that normal collection discovery could not identify.
+        jwt_resources = (
+            self._discover_jwt_claim_resources(
+                existing_resources=resources
+            )
+        )
+
+        for resource_type, resource_data in (
+            jwt_resources.items()
+        ):
+            if resource_type in resources:
+                continue
+
+            resources[resource_type] = resource_data
 
         return resources
 
@@ -522,6 +542,334 @@ class ResourceDiscovery:
                 result[role]["another"] = another
 
         return result
+
+    # ========================================================
+    # JWT CLAIM RESOURCE DISCOVERY
+    # ========================================================
+
+    def _discover_jwt_claim_resources(
+        self,
+        existing_resources=None,
+    ):
+        """
+        Fallback resource discovery using authenticated JWT claims.
+
+        This does not replace collection-based discovery.
+
+        Example:
+
+            GET /rest/basket/{param}
+
+        with JWT:
+
+            {"bid": 6}
+
+        produces an ownership mapping for the basket resource.
+
+        Ownership evidence is kept separately so a vulnerable
+        HTTP 200 cannot become an expected "any" permission.
+        """
+
+        existing_resources = (
+            existing_resources or {}
+        )
+
+        discovered = {}
+
+        candidate_endpoints = []
+
+        for endpoint in self.endpoints:
+
+            if not isinstance(endpoint, dict):
+                continue
+
+            method = str(
+                endpoint.get("method", "GET")
+            ).upper()
+
+            path = str(
+                endpoint.get("path", "")
+            )
+
+            if method != "GET":
+                continue
+
+            parameter_names = (
+                self.PATH_PARAMETER_PATTERN.findall(
+                    path
+                )
+            )
+
+            if not parameter_names:
+                continue
+
+            resource_type = (
+                self._resource_type_from_path(path)
+            )
+
+            if not resource_type:
+                continue
+
+            # Existing discovery always wins.
+            if resource_type in existing_resources:
+                continue
+
+            candidate_endpoints.append(
+                (
+                    resource_type,
+                    parameter_names[0],
+                )
+            )
+
+        if not candidate_endpoints:
+            return {}
+
+        resource_types = sorted(
+            {
+                resource_type
+                for resource_type, _ in candidate_endpoints
+            }
+        )
+
+        for resource_type in resource_types:
+
+            role_resources = {}
+
+            for role in self.accounts:
+
+                authentication = (
+                    self.authentications.get(role)
+                )
+
+                if (
+                    not authentication
+                    or not authentication.success
+                ):
+                    continue
+
+                token = getattr(
+                    authentication,
+                    "token",
+                    None,
+                )
+
+                if not token:
+                    continue
+
+                claims = (
+                    self._decode_jwt_claims(token)
+                )
+
+                if not claims:
+                    continue
+
+                resource_id = (
+                    self._jwt_resource_id(
+                        claims,
+                        resource_type,
+                    )
+                )
+
+                if resource_id is None:
+                    continue
+
+                role_resources[role] = {
+                    "own": str(resource_id)
+                }
+
+            # At least two authenticated roles with different
+            # resource IDs are required before ownership is claimed.
+            if len(role_resources) < 2:
+                continue
+
+            all_ids = []
+
+            for role_data in role_resources.values():
+
+                value = role_data.get("own")
+
+                if (
+                    value is not None
+                    and value not in all_ids
+                ):
+                    all_ids.append(value)
+
+            if len(all_ids) < 2:
+                continue
+
+            for role, role_data in role_resources.items():
+
+                own = role_data["own"]
+
+                other = next(
+                    (
+                        value
+                        for value in all_ids
+                        if value != own
+                    ),
+                    None,
+                )
+
+                if other is not None:
+                    role_data["other"] = other
+
+            discovered[resource_type] = role_resources
+
+            self.ownership_evidence[
+                resource_type
+            ] = {
+                "source": "jwt_claim",
+                "roles": {
+                    role: dict(data)
+                    for role, data
+                    in role_resources.items()
+                },
+            }
+
+        return discovered
+
+    @staticmethod
+    def _resource_type_from_path(path):
+
+        parts = [
+            part.strip()
+            for part in str(path).split("/")
+            if part.strip()
+        ]
+
+        for index, part in enumerate(parts):
+
+            if not ResourceDiscovery.PATH_PARAMETER_PATTERN.fullmatch(
+                part
+            ):
+                continue
+
+            if index == 0:
+                return None
+
+            resource = (
+                parts[index - 1]
+                .lower()
+            )
+
+            if resource.endswith("ies"):
+                resource = (
+                    resource[:-3] + "y"
+                )
+
+            elif resource.endswith("ses"):
+                resource = resource[:-2]
+
+            elif (
+                resource.endswith("s")
+                and not resource.endswith("ss")
+            ):
+                resource = resource[:-1]
+
+            return resource
+
+        return None
+
+    @staticmethod
+    def _decode_jwt_claims(token):
+
+        try:
+
+            token = str(token).strip()
+
+            if token.lower().startswith(
+                "bearer "
+            ):
+                token = token[7:].strip()
+
+            parts = token.split(".")
+
+            if len(parts) != 3:
+                return None
+
+            payload = parts[1]
+
+            padding = "=" * (
+                (-len(payload)) % 4
+            )
+
+            decoded = (
+                base64.urlsafe_b64decode(
+                    (
+                        payload + padding
+                    ).encode("ascii")
+                )
+            )
+
+            claims = json.loads(
+                decoded.decode("utf-8")
+            )
+
+            if isinstance(claims, dict):
+                return claims
+
+        except (
+            ValueError,
+            TypeError,
+            UnicodeDecodeError,
+            json.JSONDecodeError,
+            binascii.Error,
+        ):
+            pass
+
+        return None
+
+    @staticmethod
+    def _jwt_resource_id(
+        claims,
+        resource_type,
+    ):
+
+        normalized = (
+            str(resource_type)
+            .strip()
+            .lower()
+        )
+
+        candidates = [
+            f"{normalized}_id",
+            f"{normalized}id",
+        ]
+
+        # Juice Shop uses the compact "bid" claim specifically
+        # for the basket resource.
+        #
+        # Do NOT apply a generic first-letter rule here.
+        # For example:
+        #   basket     -> bid
+        #   basketitem -> bid  <-- incorrect
+        #
+        # A generic rule would cause basket ownership IDs to be
+        # incorrectly reused as BasketItem IDs.
+        if normalized == "basket":
+            candidates.append("bid")
+
+        for candidate in candidates:
+
+            for actual_key, value in (
+                claims.items()
+            ):
+
+                if (
+                    str(actual_key)
+                    .strip()
+                    .lower()
+                    == candidate
+                ):
+
+                    if isinstance(
+                        value,
+                        (str, int),
+                    ) and str(value).strip():
+
+                        return value
+
+        return None
 
     # ========================================================
     # RESOURCE MERGING

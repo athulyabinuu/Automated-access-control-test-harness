@@ -1,6 +1,6 @@
 {
   "report_type": "Automated Access Control Security Test Report",
-  "generated_at": "06 October 2026, 16:06:55",
+  "generated_at": "08 October 2026, 14:31:49",
   "target": {
     "name": "SECUREHUB",
     "base_url": "https://securehub-di8a.onrender.com"
@@ -10,6 +10,7 @@
     "failed": 2,
     "skipped": 0,
     "errors": 0,
+    "inconclusive": 0,
     "total": 32,
     "overall": "FAIL"
   },
@@ -19,7 +20,8 @@
       {
         "total": 8,
         "passed": 7,
-        "failed": 1
+        "failed": 1,
+        "inconclusive": 0
       }
     ],
     [
@@ -27,7 +29,8 @@
       {
         "total": 14,
         "passed": 14,
-        "failed": 0
+        "failed": 0,
+        "inconclusive": 0
       }
     ],
     [
@@ -35,7 +38,8 @@
       {
         "total": 2,
         "passed": 2,
-        "failed": 0
+        "failed": 0,
+        "inconclusive": 0
       }
     ],
     [
@@ -43,7 +47,8 @@
       {
         "total": 8,
         "passed": 7,
-        "failed": 1
+        "failed": 1,
+        "inconclusive": 0
       }
     ]
   ],
@@ -172,7 +177,7 @@
       "request_url": "https://securehub-di8a.onrender.com/api/users",
       "response_body": [
         {
-          "created_at": "2026-10-06 10:15:00",
+          "created_at": "2026-10-08 09:00:13",
           "department_id": 1,
           "department_name": "IT",
           "email": "alice@securehub.internal",
@@ -181,7 +186,7 @@
           "username": "alice"
         },
         {
-          "created_at": "2026-10-06 10:15:01",
+          "created_at": "2026-10-08 09:00:14",
           "department_id": 2,
           "department_name": "Finance",
           "email": "bob@securehub.internal",
@@ -190,7 +195,7 @@
           "username": "bob"
         },
         {
-          "created_at": "2026-10-06 10:15:01",
+          "created_at": "2026-10-08 09:00:15",
           "department_id": 1,
           "department_name": "IT",
           "email": "admin@securehub.internal",
@@ -199,7 +204,7 @@
           "username": "admin"
         },
         {
-          "created_at": "2026-10-06 10:15:02",
+          "created_at": "2026-10-08 09:00:16",
           "department_id": 3,
           "department_name": "HR",
           "email": "charlie@securehub.internal",
@@ -208,7 +213,7 @@
           "username": "charlie"
         },
         {
-          "created_at": "2026-10-06 10:15:03",
+          "created_at": "2026-10-08 09:00:16",
           "department_id": 4,
           "department_name": "Sales",
           "email": "david@securehub.internal",
@@ -217,7 +222,7 @@
           "username": "david"
         },
         {
-          "created_at": "2026-10-06 10:15:04",
+          "created_at": "2026-10-08 09:00:17",
           "department_id": 3,
           "department_name": "HR",
           "email": "emma@securehub.internal",
@@ -226,7 +231,7 @@
           "username": "emma"
         },
         {
-          "created_at": "2026-10-06 10:15:04",
+          "created_at": "2026-10-08 09:00:18",
           "department_id": 2,
           "department_name": "Finance",
           "email": "frank@securehub.internal",
@@ -235,7 +240,7 @@
           "username": "frank"
         },
         {
-          "created_at": "2026-10-06 10:15:05",
+          "created_at": "2026-10-08 09:00:19",
           "department_id": 4,
           "department_name": "Sales",
           "email": "grace@securehub.internal",
@@ -244,7 +249,7 @@
           "username": "grace"
         },
         {
-          "created_at": "2026-10-06 10:15:06",
+          "created_at": "2026-10-08 09:00:20",
           "department_id": 1,
           "department_name": "IT",
           "email": "henry@securehub.internal",
@@ -253,7 +258,7 @@
           "username": "henry"
         },
         {
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:20",
           "department_id": 5,
           "department_name": "Operations",
           "email": "isla@securehub.internal",
@@ -378,7 +383,7 @@
       "request_url": "https://securehub-di8a.onrender.com/api/orders",
       "response_body": [
         {
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:21",
           "department_id": 5,
           "department_name": "Operations",
           "description": "SOC Monitoring Wall Monitors",
@@ -389,7 +394,7 @@
           "user_name": "isla"
         },
         {
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:21",
           "department_id": 1,
           "department_name": "IT",
           "description": "Enterprise Switch Refresh Kit",
@@ -400,7 +405,7 @@
           "user_name": "henry"
         },
         {
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:21",
           "department_id": 4,
           "department_name": "Sales",
           "description": "Field Sales Tablet Devices x8",
@@ -411,7 +416,7 @@
           "user_name": "grace"
         },
         {
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:21",
           "department_id": 2,
           "department_name": "Finance",
           "description": "Tax Filing Database Backup Drive",
@@ -422,7 +427,7 @@
           "user_name": "frank"
         },
         {
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:21",
           "department_id": 3,
           "department_name": "HR",
           "description": "Payroll Encryption Module License",
@@ -433,7 +438,7 @@
           "user_name": "emma"
         },
         {
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:21",
           "department_id": 4,
           "department_name": "Sales",
           "description": "Client CRM Terminal Upgrades",
@@ -444,7 +449,7 @@
           "user_name": "david"
         },
         {
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:21",
           "department_id": 1,
           "department_name": "IT",
           "description": "Core Firewall Appliance Backup",
@@ -455,7 +460,7 @@
           "user_name": "admin"
         },
         {
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:21",
           "department_id": 3,
           "department_name": "HR",
           "description": "HR Onboarding Workstations x5",
@@ -466,7 +471,7 @@
           "user_name": "charlie"
         },
         {
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:20",
           "department_id": 2,
           "department_name": "Finance",
           "description": "Financial Ledger Audit Server",
@@ -477,7 +482,7 @@
           "user_name": "bob"
         },
         {
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:20",
           "department_id": 1,
           "department_name": "IT",
           "description": "HSM Security Key Tokens",
@@ -505,7 +510,7 @@
       "request_url": "https://securehub-di8a.onrender.com/api/orders",
       "response_body": [
         {
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:21",
           "department_id": 3,
           "department_name": "HR",
           "description": "HR Onboarding Workstations x5",
@@ -566,7 +571,7 @@
       "response_body": [
         {
           "content": "Classification: RESTRICTED\n\nDaily log of visitor access passes and biometric verification...",
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:21",
           "description": "Facility badge swipe records for datacenter floor.",
           "id": 9,
           "owner_id": 10,
@@ -575,7 +580,7 @@
         },
         {
           "content": "Classification: CONFIDENTIAL\n\nDiagram of core switches, DMZ hosts, and internal jump boxes...",
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:21",
           "description": "VLAN subnet layout and edge firewall rules.",
           "id": 8,
           "owner_id": 9,
@@ -584,7 +589,7 @@
         },
         {
           "content": "Classification: PUBLIC\n\nTemplate terms for mutual non-disclosure of pricing tier structures...",
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:21",
           "description": "Standard agreement form for vendor partners.",
           "id": 7,
           "owner_id": 8,
@@ -593,7 +598,7 @@
         },
         {
           "content": "Classification: INTERNAL\n\nVerification steps for encrypted tax archive storage...",
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:21",
           "description": "Overview of state and federal tax data requirements.",
           "id": 6,
           "owner_id": 7,
@@ -602,7 +607,7 @@
         },
         {
           "content": "Classification: RESTRICTED\n\nImmediate checklist for deactivating active Directory credentials...",
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:21",
           "description": "Revocation matrix for departed personnel.",
           "id": 5,
           "owner_id": 6,
@@ -611,7 +616,7 @@
         },
         {
           "content": "Classification: INTERNAL\n\nStandard protocol for storing customer PII in cloud databases...",
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:21",
           "description": "Guidance on handling client NDA materials.",
           "id": 4,
           "owner_id": 5,
@@ -620,7 +625,7 @@
         },
         {
           "content": "Classification: TOP SECRET\n\nRoot key custodians list and HSM backup verification hashes...",
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:21",
           "description": "Root CA & Vault master key ceremony logs.",
           "id": 3,
           "owner_id": 3,
@@ -629,7 +634,7 @@
         },
         {
           "content": "Classification: CONFIDENTIAL\n\nFinancial ledger encryption standards and audit trail policies...",
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:21",
           "description": "Managerial overview of quarterly accounting security.",
           "id": 2,
           "owner_id": 2,
@@ -638,7 +643,7 @@
         },
         {
           "content": "Classification: RESTRICTED\n\nSteps for initial containment of endpoint intrusions...",
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:21",
           "description": "Confidential IR procedure for Tier 1 analysts.",
           "id": 1,
           "owner_id": 1,
@@ -711,7 +716,7 @@
       "request_url": "https://securehub-di8a.onrender.com/api/documents/9",
       "response_body": {
         "content": "Classification: RESTRICTED\n\nDaily log of visitor access passes and biometric verification...",
-        "created_at": "2026-10-06 10:15:07",
+        "created_at": "2026-10-08 09:00:21",
         "description": "Facility badge swipe records for datacenter floor.",
         "id": 9,
         "owner_id": 10,
@@ -735,7 +740,7 @@
       "request_url": "https://securehub-di8a.onrender.com/api/documents/8",
       "response_body": {
         "content": "Classification: CONFIDENTIAL\n\nDiagram of core switches, DMZ hosts, and internal jump boxes...",
-        "created_at": "2026-10-06 10:15:07",
+        "created_at": "2026-10-08 09:00:21",
         "description": "VLAN subnet layout and edge firewall rules.",
         "id": 8,
         "owner_id": 9,
@@ -793,7 +798,7 @@
         {
           "assigned_to": 9,
           "assignee_name": "henry",
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:21",
           "created_by": 10,
           "creator_name": "isla",
           "description": "Secondary HVAC unit reporting temperature spike in Rack B4.",
@@ -805,7 +810,7 @@
         {
           "assigned_to": 6,
           "assignee_name": "emma",
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:21",
           "created_by": 7,
           "creator_name": "frank",
           "description": "Requesting annual access validation report for quarterly audit.",
@@ -817,7 +822,7 @@
         {
           "assigned_to": 9,
           "assignee_name": "henry",
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:21",
           "created_by": 5,
           "creator_name": "david",
           "description": "Cannot connect to internal enterprise wireless SSID.",
@@ -829,7 +834,7 @@
         {
           "assigned_to": 3,
           "assignee_name": "admin",
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:21",
           "created_by": 2,
           "creator_name": "bob",
           "description": "Patch critical CVE-2026-9901 vulnerability on edge database router.",
@@ -841,7 +846,7 @@
         {
           "assigned_to": 3,
           "assignee_name": "admin",
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:21",
           "created_by": 4,
           "creator_name": "charlie",
           "description": "Locked out of CRM portal after multiple failed attempts.",
@@ -853,7 +858,7 @@
         {
           "assigned_to": 9,
           "assignee_name": "henry",
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:21",
           "created_by": 1,
           "creator_name": "alice",
           "description": "Need temporary VPN credentials configured for audit team.",
@@ -882,7 +887,7 @@
         {
           "assigned_to": 3,
           "assignee_name": "admin",
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:21",
           "created_by": 4,
           "creator_name": "charlie",
           "description": "Locked out of CRM portal after multiple failed attempts.",
@@ -941,7 +946,7 @@
       "request_url": "https://securehub-di8a.onrender.com/api/reports",
       "response_body": [
         {
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:21",
           "created_by": 9,
           "creator_name": "henry",
           "description": "External port scan and penetration testing summary.",
@@ -950,7 +955,7 @@
           "title": "IT Perimeter Vulnerability Assessment"
         },
         {
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:21",
           "created_by": 6,
           "creator_name": "emma",
           "description": "Evaluation of employee personal record retention policies.",
@@ -959,7 +964,7 @@
           "title": "HR Privacy & GDPR Audit Report"
         },
         {
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:21",
           "created_by": 3,
           "creator_name": "admin",
           "description": "Auditor findings and security control efficacy summary.",
@@ -968,7 +973,7 @@
           "title": "Annual SOC 2 Type II Compliance Audit"
         },
         {
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:21",
           "created_by": 1,
           "creator_name": "alice",
           "description": "Q3 employee security awareness training click-through stats.",
@@ -977,7 +982,7 @@
           "title": "Phishing Simulation Campaign Results"
         },
         {
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:21",
           "created_by": 2,
           "creator_name": "bob",
           "description": "Scan report covering accounting databases and export nodes.",
@@ -1067,7 +1072,7 @@
       "request_url": "https://securehub-di8a.onrender.com/api/notifications",
       "response_body": [
         {
-          "created_at": "2026-10-06 10:15:07",
+          "created_at": "2026-10-08 09:00:21",
           "id": 4,
           "is_read": false,
           "message": "Your password reset ticket #2 is currently Open.",

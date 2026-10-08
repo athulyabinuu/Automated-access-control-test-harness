@@ -34,7 +34,11 @@ BORDER = "#CBD5E1"
 
 
 def _counts(results):
-    passed = sum(1 for result in results if result.passed)
+    passed = sum(
+        1
+        for result in results
+        if result.passed
+    )
 
     failed = sum(
         1
@@ -42,6 +46,7 @@ def _counts(results):
         if not result.passed
         and not result.skipped
         and not result.error
+        and not result.inconclusive
     )
 
     skipped = sum(
@@ -56,7 +61,13 @@ def _counts(results):
         if result.error
     )
 
-    return passed, failed, skipped, errors
+    inconclusive = sum(
+        1
+        for result in results
+        if result.inconclusive
+    )
+
+    return passed, failed, skipped, errors, inconclusive
 
 
 def _status(result):
@@ -64,6 +75,8 @@ def _status(result):
         return "ERROR"
     if result.skipped:
         return "SKIP"
+    if result.inconclusive:
+        return "INCONCLUSIVE"
     if result.passed:
         return "PASS"
     return "FAIL"
@@ -94,7 +107,12 @@ def _category_counts(results):
     ]
 
     counts = {
-        name: {"total": 0, "passed": 0, "failed": 0}
+        name: {
+            "total": 0,
+            "passed": 0,
+            "failed": 0,
+            "inconclusive": 0,
+        }
         for name in order
     }
 
@@ -106,12 +124,15 @@ def _category_counts(results):
                 "total": 0,
                 "passed": 0,
                 "failed": 0,
+                "inconclusive": 0,
             }
 
         counts[category]["total"] += 1
 
         if result.passed:
             counts[category]["passed"] += 1
+        elif result.inconclusive:
+            counts[category]["inconclusive"] += 1
         elif not result.skipped and not result.error:
             counts[category]["failed"] += 1
 
@@ -122,10 +143,20 @@ def _category_counts(results):
     ]
 
 
-def _overall(passed, failed, skipped, errors):
-    if failed == 0 and errors == 0:
-        return "PASS"
-    return "FAIL"
+def _overall(
+    passed,
+    failed,
+    skipped,
+    errors,
+    inconclusive,
+):
+    if failed > 0 or errors > 0:
+        return "FAIL"
+
+    if inconclusive > 0:
+        return "INCONCLUSIVE"
+
+    return "PASS"
 
 
 def _generated_time():
@@ -236,7 +267,7 @@ def generate_json_report(
 ):
     rows = _result_rows(results)
 
-    passed, failed, skipped, errors = _counts(results)
+    passed, failed, skipped, errors, inconclusive = _counts(results)
 
     report = {
         "report_type": "Automated Access Control Security Test Report",
@@ -250,12 +281,14 @@ def generate_json_report(
             "failed": failed,
             "skipped": skipped,
             "errors": errors,
+            "inconclusive": inconclusive,
             "total": len(results),
             "overall": _overall(
                 passed,
                 failed,
                 skipped,
                 errors,
+                inconclusive,
             ),
         },
         "categories": _category_counts(results),
@@ -289,13 +322,14 @@ def generate_html_report(
         exist_ok=True,
     )
 
-    passed, failed, skipped, errors = _counts(results)
+    passed, failed, skipped, errors, inconclusive = _counts(results)
     total = len(results)
     overall = _overall(
         passed,
         failed,
         skipped,
         errors,
+        inconclusive,
     )
 
     generated = _generated_time()
@@ -316,6 +350,9 @@ def generate_html_report(
                 <td class="pass">{counts["passed"]}</td>
                 <td class="fail">
                     {counts["failed"]}
+                </td>
+                <td class="inconclusive">
+                    {counts["inconclusive"]}
                 </td>
             </tr>
             """
@@ -424,7 +461,11 @@ def generate_html_report(
     overall_class = (
         "overall-pass"
         if overall == "PASS"
-        else "overall-fail"
+        else (
+            "overall-inconclusive"
+            if overall == "INCONCLUSIVE"
+            else "overall-fail"
+        )
     )
 
     html = f"""<!DOCTYPE html>
@@ -543,6 +584,10 @@ h2 {{
     color: {RED};
 }}
 
+.card.inconclusive .card-value {{
+    color: #d97706;
+}}
+
 .overall {{
     margin: 22px 0;
     padding: 22px;
@@ -562,6 +607,12 @@ h2 {{
     color: #991b1b;
     background: #fef2f2;
     border: 1px solid #fca5a5;
+}}
+
+.overall-inconclusive {{
+    color: #92400e;
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
 }}
 
 table {{
@@ -826,12 +877,21 @@ tbody tr:nth-child(even) {{
     <div class="card-value">{errors}</div>
 </div>
 
+<div class="card inconclusive">
+    <div class="card-label">Inconclusive</div>
+    <div class="card-value">{inconclusive}</div>
+</div>
+
 </div>
 
 <div class="overall {overall_class}">
     {"✓ OVERALL SECURITY RESULT: PASS"
      if overall == "PASS"
-     else "✗ OVERALL SECURITY RESULT: FAIL"}
+     else (
+         "⚠ OVERALL SECURITY RESULT: INCONCLUSIVE"
+         if overall == "INCONCLUSIVE"
+         else "✗ OVERALL SECURITY RESULT: FAIL"
+     )}
 </div>
 
 <h2>2. Security Test Coverage</h2>
@@ -843,6 +903,7 @@ tbody tr:nth-child(even) {{
     <th>Total</th>
     <th>Passed</th>
     <th>Failed</th>
+    <th>Inconclusive</th>
 </tr>
 </thead>
 
@@ -893,14 +954,19 @@ rules.
 A total of <strong>{total}</strong> automated security tests were
 executed. <strong>{passed}</strong> passed,
 <strong>{failed}</strong> failed,
-<strong>{skipped}</strong> were skipped, and
+<strong>{skipped}</strong> were skipped,
+<strong>{inconclusive}</strong> were inconclusive, and
 <strong>{errors}</strong> produced errors.
 </p>
 
 <div class="overall {overall_class}">
     {"✓ OVERALL SECURITY RESULT: PASS"
      if overall == "PASS"
-     else "✗ OVERALL SECURITY RESULT: FAIL"}
+     else (
+         "⚠ OVERALL SECURITY RESULT: INCONCLUSIVE"
+         if overall == "INCONCLUSIVE"
+         else "✗ OVERALL SECURITY RESULT: FAIL"
+     )}
 </div>
 
 <div class="footer">
@@ -932,13 +998,14 @@ def generate_pdf_report(
         exist_ok=True,
     )
 
-    passed, failed, skipped, errors = _counts(results)
+    passed, failed, skipped, errors, inconclusive = _counts(results)
     total = len(results)
     overall = _overall(
         passed,
         failed,
         skipped,
         errors,
+        inconclusive,
     )
 
     generated = _generated_time()
