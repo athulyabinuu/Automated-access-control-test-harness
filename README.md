@@ -1009,7 +1009,7 @@ The Juice Shop results demonstrate that the framework can:
 
 ## 20. Reports
 
-The generated reports are stored in:
+The generated security assessment reports are stored in:
 
 ```text
 reports/
@@ -1017,11 +1017,9 @@ reports/
 
 Available report formats:
 
-```text
-HTML
-PDF
-JSON
-```
+* HTML
+* PDF
+* JSON
 
 ### HTML Report
 
@@ -1035,7 +1033,43 @@ Provides a shareable security assessment document.
 
 Provides machine-readable test results that can be processed by other tools.
 
----
+### Generated Report Files
+
+**Target 1**
+
+* `reports/Target_1_access_control_report.html`
+* `reports/Target_1_access_control_report.pdf`
+* `reports/Target_1_access_control_report.json`
+
+**SECUREHUB**
+
+* `reports/SECUREHUB_access_control_report.html`
+* `reports/SECUREHUB_access_control_report.pdf`
+* `reports/SECUREHUB_access_control_report.json`
+
+**OWASP Juice Shop**
+
+* `reports/OWASP_Juice_Shop_access_control_report.html`
+* `reports/OWASP_Juice_Shop_access_control_report.pdf`
+* `reports/OWASP_Juice_Shop_access_control_report.json`
+
+### OWASP Juice Shop Assessment Summary
+
+The recorded assessment contains 102 test results:
+
+| Result       |   Count |
+| ------------ | ------: |
+| PASS         |      74 |
+| FAIL         |       4 |
+| SKIPPED      |       4 |
+| INCONCLUSIVE |      20 |
+| ERROR        |       0 |
+| **TOTAL**    | **102** |
+
+The four FAIL results were recorded as potential access-control findings requiring review against the expected authorization policy. INCONCLUSIVE results indicate that the available evidence was insufficient to make a reliable authorization determination.
+
+These results describe the recorded test execution; they do not independently establish that every finding has been manually confirmed.
+
 
 ## 21. Project Structure
 
@@ -1079,8 +1113,10 @@ access-control-test-harness/
 │   ├── Target_1_access_control_report.pdf
 │   ├── SECUREHUB_access_control_report.html
 │   ├── SECUREHUB_access_control_report.json
-│   └── SECUREHUB_access_control_report.pdf
-│
+│   ├── SECUREHUB_access_control_report.pdf
+│   ├── OWASP_Juice_Shop_access_control_report.html
+│   ├── OWASP_Juice_Shop_access_control_report.json
+│   └── OWASP_Juice_Shop_access_control_report.pdf
 ├── requirements.txt
 ├── README.md
 └── .gitignore
